@@ -1,0 +1,7 @@
+{
+	"pnpm": {
+		"patchedDependencies": {
+			"web-tree-sitter": "patches/web-tree-sitter.patch"
+		}
+	}
+}

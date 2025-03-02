@@ -9,11 +9,28 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "solid-js": "^1.9.3"
+    "@kobalte/core": "^0.13.9",
+    "@types/node": "22.13.8",
+    "browserfs": "1.4.3",
+    "emotion-solid": "^2.1.0",
+    "monaco-editor": "0.48.0",
+    "monaco-tree-sitter": "0.0.5",
+    "solid-js": "1.9.5",
+    "solid-monaco": "0.3.0",
+    "solid-styled-components": "^0.28.5",
+    "tree-sitter-nu": "github:nushell/tree-sitter-nu",
+    "web-tree-sitter": "0.25.2"
   },
   "devDependencies": {
+    "@tailwindcss/vite": "^4.0.9",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.0.9",
     "typescript": "~5.6.2",
     "vite": "^6.0.5",
-    "vite-plugin-solid": "^2.11.0"
+    "vite-plugin-monaco-editor": "1.1.0",
+    "vite-plugin-solid": "^2.11.0",
+    "vite-plugin-top-level-await": "^1.5.0",
+    "vite-plugin-wasm": "^3.4.1"
   }
 }

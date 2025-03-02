@@ -1,0 +1,3 @@
+[submodule "tree-sitter-nu"]
+	path = tree-sitter-nu
+	url = https://github.com/nushell/tree-sitter-nu.git
