@@ -1,8 +1,8 @@
 import { defineConfig } from 'vite'
-import solid from 'vite-plugin-solid'
+import { svelte } from '@sveltejs/vite-plugin-svelte'
 import tailwindcss from '@tailwindcss/vite'
 
-
+// https://vite.dev/config/
 export default defineConfig({
-  plugins: [solid(), tailwindcss()], assetsInclude: ['**/*.wasm'],
+  plugins: [svelte(), tailwindcss()],
 })
