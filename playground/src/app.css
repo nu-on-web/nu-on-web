@@ -16,7 +16,7 @@ input {
 }
 
 ol {
-  list-style: decimal;
+  @apply max-w-md space-y-1 list-decimal list-inside text-gray-400;
 }
 
 table {

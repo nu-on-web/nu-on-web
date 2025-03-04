@@ -20,7 +20,6 @@
     }
     result = tmpResult;
   }
-  $: console.log("Result:", result);
 </script>
 
 <div class="min-h-full bg-black">

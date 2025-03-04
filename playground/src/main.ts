@@ -8,7 +8,6 @@ import { merge, pick } from 'lodash-es'
 
 
 globalThis.readfile = (path: string): string[] => {
-  console.log("readfile", { path })
   const fs = BrowserFS.BFSRequire('fs');
   return fs.readFileSync(path).toString('utf-8')
 }
