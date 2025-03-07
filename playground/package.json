@@ -2,6 +2,7 @@
   "name": "playground",
   "private": true,
   "version": "0.0.0",
+  "homepage": "https://nu-on-web.github.io/nu-on-web/",
   "type": "module",
   "scripts": {
     "dev": "vite",
