@@ -1,14 +1,17 @@
 mod utils;
 
-use nu_cmd_extra::ToHtml;
-use nu_cmd_lang::{create_default_context, eval_block, parse};
-use nu_command::{Find, FromCsv, FromJson, Help, Sort, ToCsv, ToJson};
-use nu_protocol::{engine::StateWorkingSet, PipelineData, Value};
-use std::path::Path;
+use nu_cmd_lang::{create_default_context, eval_block};
+use nu_protocol::{
+    ast::Block,
+    engine::{EngineState, StateWorkingSet},
+    CompileError, ParseError, PipelineData, Value,
+};
+use serde::Serialize;
+use std::{path::Path, sync::Arc};
 use utils::set_panic_hook;
 use wasm_bindgen::prelude::*;
+mod cat;
 mod ls;
-mod open;
 
 #[wasm_bindgen]
 extern "C" {
@@ -17,31 +20,62 @@ extern "C" {
     fn consolelog(s: &str);
 }
 
+#[derive(Serialize, Debug)]
+#[serde(rename_all(serialize = "camelCase", deserialize = "camelCase"))]
+enum RunCodeResult {
+    Success(Value),
+    ParseErrors(Vec<ParseError>),
+    CompileErrors(Vec<CompileError>),
+}
+
+fn parse<'engine>(
+    contents: &str,
+    engine_state: &'engine EngineState,
+) -> (Arc<Block>, StateWorkingSet<'engine>) {
+    let mut working_set = StateWorkingSet::new(engine_state);
+    let output = nu_parser::parse(&mut working_set, None, contents.as_bytes(), false);
+
+    (output, working_set)
+}
+
+fn get_engine() -> EngineState {
+    let mut engine_state = create_default_context();
+    engine_state = nu_command::add_shell_command_context(engine_state);
+    engine_state = nu_cmd_extra::add_extra_command_context(engine_state);
+    let mut working_set = StateWorkingSet::new(&engine_state);
+    working_set.add_decl(Box::new(ls::Ls));
+    working_set.add_decl(Box::new(cat::Cat));
+    engine_state
+        .merge_delta(working_set.delta)
+        .expect("Failed to merge delte");
+    engine_state
+}
+
+fn run_nushell_code(code: &str) -> RunCodeResult {
+    let mut engine_state = get_engine();
+
+    let (block, working_set) = parse(&code, &engine_state);
+
+    if !working_set.parse_errors.is_empty() {
+        return RunCodeResult::ParseErrors(working_set.parse_errors);
+    }
+    if !working_set.compile_errors.is_empty() {
+        return RunCodeResult::CompileErrors(working_set.compile_errors);
+    }
+    engine_state.merge_delta(working_set.delta).unwrap();
+
+    let value = eval_block(
+        block,
+        PipelineData::empty(),
+        Path::new("/tmp"),
+        &engine_state,
+    );
+    RunCodeResult::Success(value)
+}
+
 #[wasm_bindgen]
 pub fn run_code(code: String) -> String {
     set_panic_hook();
-    let mut ctx = create_default_context();
-    let mut s = StateWorkingSet::new(&ctx);
-    macro_rules! bind_command {
-        ( $( $command:expr ),* $(,)? ) => {
-            $( s.add_decl(Box::new($command)); )*
-        };
-    }
-    bind_command! {
-        Sort,
-        ToHtml,
-        FromJson,
-        ToJson,
-        FromCsv,
-        ToCsv,
-        Find,
-        Help,
-        ls::Ls,
-        open::Open,
-    }
-    ctx.merge_delta(s.delta).expect("Failed to merge delte");
-
-    let (block, _) = parse(&code, &ctx);
-    let val = eval_block(block, PipelineData::empty(), Path::new("/tmp"), &ctx);
-    return serde_json::to_string(&val).expect("Failed serizling to string!");
+    let result = run_nushell_code(&code);
+    serde_json::to_string(&result).expect("Failed serializing to json!")
 }

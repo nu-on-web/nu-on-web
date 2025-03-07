@@ -11,9 +11,9 @@ extern "C" {
 }
 
 #[derive(Clone)]
-pub struct Open;
+pub struct Cat;
 
-impl Command for Open {
+impl Command for Cat {
     fn name(&self) -> &str {
         "cat"
     }
@@ -29,7 +29,7 @@ impl Command for Open {
     }
 
     fn description(&self) -> &str {
-        "open file"
+        "cat file"
     }
 
     fn run(

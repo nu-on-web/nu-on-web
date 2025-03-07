@@ -8,7 +8,7 @@ body,
 
 
 label {
-  @apply block mb-2 text-sm font-medium text-white;
+  @apply block text-sm font-medium text-white;
 }
 
 input {
