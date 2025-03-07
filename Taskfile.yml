@@ -1,6 +1,0 @@
-version: '3'
-
-tasks:
-  build:
-    cmds:
-      - rustup run nightly wasm-pack build --target web --out-dir playground/src/wasm
