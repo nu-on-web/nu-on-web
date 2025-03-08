@@ -55,7 +55,7 @@ fn get_engine() -> EngineState {
 fn run_nushell_code(code: &str) -> RunCodeResult {
     let mut engine_state = get_engine();
 
-    let (block, working_set) = parse(&code, &engine_state);
+    let (block, working_set) = parse(code, &engine_state);
 
     if !working_set.parse_errors.is_empty() {
         return RunCodeResult::ParseErrors(working_set.parse_errors);
@@ -75,10 +75,10 @@ fn run_nushell_code(code: &str) -> RunCodeResult {
 }
 
 #[wasm_bindgen]
-pub fn run_code(code: String) -> String {
+pub fn run_code(code: String) -> JsValue {
     set_panic_hook();
     let result = run_nushell_code(&code);
-    serde_json::to_string(&result).expect("Failed serializing to json!")
+    serde_wasm_bindgen::to_value(&result).expect("Failed serializing to json!")
 }
 
 #[derive(Serialize)]
