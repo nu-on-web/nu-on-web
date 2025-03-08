@@ -15,6 +15,6 @@ export function spanToRange(content: string, span: Span): Monaco.Range {
     startLineNumber,
     startColumn,
     endLineNumber,
-    endColumn,
+    endColumn + 1,
   );
 }

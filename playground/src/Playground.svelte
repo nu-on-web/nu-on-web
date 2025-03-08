@@ -171,7 +171,9 @@
         <span class="text-red-600">{error}</span>
       {/if}
       {#if result}
-        {@html result}
+        <pre>
+          {@html result}
+        </pre>
       {:else}
         <i>No Result</i>
       {/if}
