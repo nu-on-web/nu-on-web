@@ -4,7 +4,8 @@ use nu_cmd_lang::{create_default_context, eval_block};
 use nu_protocol::{
     ast::Block,
     engine::{EngineState, StateWorkingSet},
-    CompileError, ParseError, PipelineData, Value,
+    ir::Instruction,
+    CompileError, ParseError, PipelineData, Span, Value,
 };
 use serde::Serialize;
 use std::{path::Path, sync::Arc};
@@ -78,4 +79,37 @@ pub fn run_code(code: String) -> String {
     set_panic_hook();
     let result = run_nushell_code(&code);
     serde_json::to_string(&result).expect("Failed serializing to json!")
+}
+
+#[derive(Serialize)]
+struct GetCommandDescriptionResult {
+    span: Span,
+    description: String,
+}
+
+#[wasm_bindgen]
+pub fn get_commands_descriptions(code: String) -> String {
+    let engine_state = get_engine();
+    let (block, _) = parse(&code, &engine_state);
+
+    let commands_descriptions: Vec<GetCommandDescriptionResult> =
+        block.ir_block.as_ref().map_or(vec![], |ir_block| {
+            ir_block
+                .instructions
+                .iter()
+                .zip(&ir_block.spans)
+                .filter_map(|(instruction, span)| match instruction {
+                    Instruction::Call {
+                        decl_id,
+                        src_dst: _,
+                    } => Some(GetCommandDescriptionResult {
+                        span: *span,
+                        description: engine_state.get_decl(*decl_id).description().to_string(),
+                    }),
+                    _ => None,
+                })
+                .collect()
+        });
+
+    serde_json::to_string(&commands_descriptions).unwrap_or_else(|_| "[]".to_string())
 }
