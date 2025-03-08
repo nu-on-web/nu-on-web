@@ -5,10 +5,10 @@
   import * as Monaco from "monaco-editor";
   import Convert from "ansi-to-html";
   let convert = new Convert();
-  let editor: Monaco.editor.IStandaloneCodeEditor;
-  import { run_code } from "./wasm/nushell_wasm";
-  import { Result } from "./lib/types";
-  import lineColumn from "line-column";
+  let editor: Monaco.editor.IStandaloneCodeEditor | null = $state(null);
+  import { run_code, get_commands_descriptions } from "./wasm/nushell_wasm";
+  import { Result, GetCommandsDescriptionsResult } from "./lib/types";
+  import { spanToRange } from "./lib/utils";
   import { chain } from "lodash-es";
 
   let result: string = $state("");
@@ -30,6 +30,7 @@
     );
   }
   function runCode(code: string, search?: string) {
+    if (!editor) return;
     let codeToRun = code;
     if (search) {
       codeToRun += ` | find '${search}'`;
@@ -50,22 +51,10 @@
         const decorationCollection = chain(runResult.compileErrors)
           .map((error) => {
             if ("RunExternalNotFound" in error) {
-              const { line: startLineNumber, col: startColumn } = lineColumn(
-                code,
-              ).fromIndex(error.RunExternalNotFound.span.start)!;
-              const { line: endLineNumber, col: endColumn } = lineColumn(
-                code,
-              ).fromIndex(
-                Math.min(code.length - 1, error.RunExternalNotFound.span.end),
-              )!;
+              const range = spanToRange(code, error.RunExternalNotFound.span);
 
               return {
-                range: {
-                  startLineNumber,
-                  startColumn,
-                  endLineNumber,
-                  endColumn: endColumn + 1,
-                },
+                range,
                 options: {
                   inlineClassName:
                     "underline decoration-wavy decoration-red-400",
@@ -110,6 +99,33 @@
   ) {
     editor = event.detail;
   }
+  let commandsDecoration: Monaco.editor.IEditorDecorationsCollection;
+
+  function updateCodeCommandsDecoration(code: string) {
+    if (!editor) return;
+    const getCommandsDescriptionsResult = JSON.parse(
+      get_commands_descriptions(code),
+    );
+    const commandsDescriptions = GetCommandsDescriptionsResult.parse(
+      getCommandsDescriptionsResult,
+    );
+    console.log({ commandsDescriptions });
+    return editor.createDecorationsCollection(
+      commandsDescriptions.map((commandDescription) => {
+        const range = spanToRange(code, commandDescription.span);
+        return {
+          range,
+          options: { hoverMessage: { value: commandDescription.description } },
+        };
+      }),
+    );
+  }
+  $effect(() => {
+    console.log(new Date());
+    if (!editor) return;
+    commandsDecoration?.clear();
+    commandsDecoration = updateCodeCommandsDecoration(code)!; // using ! since we check for editor above
+  });
 </script>
 
 <div class="min-h-full bg-black">
