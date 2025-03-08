@@ -27,6 +27,11 @@ globalThis.stat = (path: string) => {
   return merge(pick(stats, ['size']), { isDirectory: stats.isDirectory() })
 }
 
+globalThis.unlink = (path: string) => {
+  const fs = BrowserFS.BFSRequire('fs');
+  fs.unlinkSync(path);
+}
+
 const app = mount(App, {
   target: document.getElementById('app')!,
 })

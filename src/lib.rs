@@ -13,6 +13,7 @@ use utils::set_panic_hook;
 use wasm_bindgen::prelude::*;
 mod cat;
 mod ls;
+mod rm;
 
 #[wasm_bindgen]
 extern "C" {
@@ -46,6 +47,7 @@ fn get_engine() -> EngineState {
     let mut working_set = StateWorkingSet::new(&engine_state);
     working_set.add_decl(Box::new(ls::Ls));
     working_set.add_decl(Box::new(cat::Cat));
+    working_set.add_decl(Box::new(rm::Rm));
     engine_state
         .merge_delta(working_set.delta)
         .expect("Failed to merge delte");
