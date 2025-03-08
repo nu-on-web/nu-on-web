@@ -18,9 +18,7 @@
   let autoRun = $state(false);
   let error = $state("");
   async function handleFileDrop(e: CustomEvent<any>) {
-    console.log("detail:", e.detail);
     const file: File = e.detail.acceptedFiles[0];
-    console.log({ file });
     const fs = BrowserFS.BFSRequire("fs");
     fs.writeFileSync(file.name, Buffer.from([]));
     await file.stream().pipeTo(
@@ -40,7 +38,6 @@
     let tmpResult;
     try {
       const runOutput = JSON.parse(run_code(codeToRun));
-      console.log({ runOutput });
       const runResult = Result.parse(runOutput);
       if ("success" in runResult) {
         tmpResult = runResult.success.String.val;
@@ -50,41 +47,39 @@
         return;
       } else if ("compileErrors" in runResult) {
         error = "compile errors: " + JSON.stringify(runResult.compileErrors);
-        console.log(123, editor.getModel());
-        Monaco.editor.setModelMarkers(
-          editor.getModel()!,
-          "nu-errors",
-          chain(runResult.compileErrors)
-            .map((error) => {
-              if ("RunExternalNotFound" in error) {
-                const { line: startLineNumber, col: startColumn } = lineColumn(
-                  code,
-                ).fromIndex(error.RunExternalNotFound.span.start)!;
-                const { line: endLineNumber, col: endColumn } = lineColumn(
-                  code,
-                ).fromIndex(
-                  Math.min(code.length - 1, error.RunExternalNotFound.span.end),
-                )!;
-                console.log({
-                  endLineNumber,
-                  endColumn,
-                  startColumn,
-                  startLineNumber,
-                });
-                return {
-                  severity: Monaco.MarkerSeverity.Error,
-                  message: "Command Not found",
+        const decorationCollection = chain(runResult.compileErrors)
+          .map((error) => {
+            if ("RunExternalNotFound" in error) {
+              const { line: startLineNumber, col: startColumn } = lineColumn(
+                code,
+              ).fromIndex(error.RunExternalNotFound.span.start)!;
+              const { line: endLineNumber, col: endColumn } = lineColumn(
+                code,
+              ).fromIndex(
+                Math.min(code.length - 1, error.RunExternalNotFound.span.end),
+              )!;
+
+              return {
+                range: {
                   startLineNumber,
                   startColumn,
                   endLineNumber,
-                  endColumn,
-                } satisfies Monaco.editor.IMarkerData;
-              }
-              return undefined;
-            })
-            .compact()
-            .value(),
-        );
+                  endColumn: endColumn + 1,
+                },
+                options: {
+                  inlineClassName:
+                    "underline decoration-wavy decoration-red-400",
+                  hoverMessage: {
+                    value: `Command \`${code.substring(error.RunExternalNotFound.span.start, error.RunExternalNotFound.span.end)}\` not found.`,
+                  },
+                },
+              };
+            }
+            return undefined;
+          })
+          .compact()
+          .value();
+        editor.createDecorationsCollection(decorationCollection);
         return;
       } else {
         error = "results are not clear.";
@@ -106,7 +101,6 @@
     runCode(code, search);
   }
   $effect(() => {
-    console.log(new Date());
     if (autoRun) {
       runCode(code, search);
     }
@@ -114,9 +108,7 @@
   function editorReady(
     event: CustomEvent<Monaco.editor.IStandaloneCodeEditor>,
   ) {
-    console.log("editor is ready!");
     editor = event.detail;
-    Monaco.editor.onDidChangeMarkers((e) => console.log(55, e));
   }
 </script>
 
