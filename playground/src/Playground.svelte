@@ -38,7 +38,7 @@
     codeToRun += " | to html -d --partial";
     let tmpResult;
     try {
-      const runOutput = JSON.parse(run_code(codeToRun));
+      const runOutput = run_code(codeToRun);
       const runResult = Result.parse(runOutput);
       if ("success" in runResult) {
         tmpResult = runResult.success.String.val;
