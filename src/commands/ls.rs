@@ -1,22 +1,6 @@
 use nu_engine::command_prelude::*;
 
-use serde::Deserialize;
-
-use serde_wasm_bindgen::from_value;
-use wasm_bindgen::prelude::*;
-
-#[derive(Deserialize, Debug)]
-#[serde(rename_all(serialize = "camelCase", deserialize = "camelCase"))]
-struct Stats {
-    pub is_directory: bool,
-    pub size: i64,
-}
-
-#[wasm_bindgen]
-extern "C" {
-    fn readdir(path: &str) -> Vec<String>;
-    fn stat(path: &str) -> JsValue;
-}
+use crate::zenfs::{readdir, stat};
 
 #[derive(Clone)]
 pub struct Ls;
@@ -46,16 +30,16 @@ impl Command for Ls {
         input: PipelineData,
     ) -> Result<PipelineData, nu_protocol::ShellError> {
         let path = call.get_flag::<String>(engine_state, stack, "path")?;
+        let path = path.unwrap_or_else(|| ".".to_string());
         let span = input.span().unwrap_or(call.head);
         let metadata = input.metadata();
         Ok(Value::list(
-            readdir(&path.unwrap_or(String::from(".")))
+            readdir(&path)
                 .into_iter()
                 .map(move |f| {
                     let record = {
                         let mut record = Record::new();
-                        let v = stat(&f);
-                        let stats: Stats = from_value(v).expect("Failed to get stats");
+                        let stats = stat(&f);
                         record.insert("name", Value::string(f, span));
                         record.insert("size", Value::filesize(stats.size, span));
                         record.insert(
