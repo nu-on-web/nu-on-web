@@ -1,5 +1,5 @@
 <script lang="ts">
-  import * as BrowserFS from "browserfs";
+  import {fs} from "@zenfs/core"
   import Dropzone from "svelte-file-dropzone";
   import MonacoEditor from "svelte-monaco";
   import * as Monaco from "monaco-editor";
@@ -19,7 +19,6 @@
   let error = $state("");
   async function handleFileDrop(e: CustomEvent<any>) {
     const file: File = e.detail.acceptedFiles[0];
-    const fs = BrowserFS.BFSRequire("fs");
     fs.writeFileSync(file.name, Buffer.from([]));
     await file.stream().pipeTo(
       new WritableStream({
@@ -103,9 +102,7 @@
 
   function updateCodeCommandsDecoration(code: string) {
     if (!editor) return;
-    const getCommandsDescriptionsResult = JSON.parse(
-      get_commands_descriptions(code),
-    );
+    const getCommandsDescriptionsResult = get_commands_descriptions(code);
     const commandsDescriptions = GetCommandsDescriptionsResult.parse(
       getCommandsDescriptionsResult,
     );

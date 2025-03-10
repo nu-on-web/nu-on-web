@@ -1,11 +1,7 @@
 use nu_engine::CallExt;
 use nu_protocol::{engine::Command, PipelineData, ShellError, Signature, SyntaxShape, Type};
-use wasm_bindgen::prelude::*;
 
-#[wasm_bindgen]
-extern "C" {
-    fn unlink(path: String);
-}
+use crate::zenfs::unlink;
 
 #[derive(Clone)]
 pub struct Rm;
@@ -36,8 +32,8 @@ impl Command for Rm {
         call: &nu_protocol::engine::Call,
         _input: nu_protocol::PipelineData,
     ) -> Result<PipelineData, ShellError> {
-        let path = call.req(engine_state, stack, 0)?;
-        unlink(path);
+        let path: String = call.req(engine_state, stack, 0)?;
+        unlink(&path);
         Ok(PipelineData::empty())
     }
 }

@@ -3,12 +3,8 @@ use nu_protocol::{
     engine::Command, IntoPipelineData, PipelineData, ShellError, Signature, SyntaxShape, Type,
     Value,
 };
-use wasm_bindgen::prelude::*;
 
-#[wasm_bindgen]
-extern "C" {
-    fn readfile(path: String) -> String;
-}
+use crate::zenfs::readfile;
 
 #[derive(Clone)]
 pub struct Cat;
@@ -39,9 +35,10 @@ impl Command for Cat {
         call: &nu_protocol::engine::Call,
         input: nu_protocol::PipelineData,
     ) -> Result<PipelineData, ShellError> {
-        let path = call.req(engine_state, stack, 0)?;
+        let path: String = call.req(engine_state, stack, 0)?;
         let span = input.span().unwrap_or(call.head);
         let metadata = input.metadata();
-        Ok(Value::string(readfile(path), span).into_pipeline_data_with_metadata(metadata))
+
+        Ok(Value::string(readfile(&path), span).into_pipeline_data_with_metadata(metadata))
     }
 }
