@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+@plugin "daisyui" {
+  themes: dark --default;
+  root: ":root";
+  logs: true;
+}
+
 html,
 body,
 #app {
