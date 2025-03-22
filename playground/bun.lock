@@ -32,7 +32,6 @@
         "daisyui": "^5.0.9",
         "prettier": "^3.5.3",
         "prettier-plugin-svelte": "^3.3.3",
-        "sass-embedded": "^1.86.0",
         "svelte": "^5.20.2",
         "svelte-check": "^4.1.4",
         "typescript": "~5.7.2",
