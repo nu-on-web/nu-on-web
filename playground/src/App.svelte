@@ -1,13 +1,11 @@
 <script lang="ts">
   import "./app.css";
   import Playground from "./Playground.svelte";
-  import init from "./wasm/nushell_wasm";
   import { fs } from "@zenfs/core";
 
   $effect(() => {
-    init().then(() => {
-      fs.writeFileSync("./test.json", "[1,2,3]");
-    });
+    fs.mkdirSync("/files");
+    fs.writeFileSync("/files/example.json", "[{v:1},{v:2},{v:3}]");
   });
 </script>
 

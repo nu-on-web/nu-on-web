@@ -22,7 +22,15 @@
   }
 </script>
 
-<div class="h-screen flex flex-col">
+<div class="playground">
   <Chat class="grow" {messages} />
   <Prompt {onSend} disable={proccessing} />
 </div>
+
+<style>
+  .playground {
+    height: 100vh;
+    display: grid;
+    grid-template-rows: 1fr auto;
+  }
+</style>

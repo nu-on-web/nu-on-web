@@ -6,13 +6,6 @@
   logs: true;
 }
 
-html,
-body,
-#app {
-  height: 100%;
-}
-
-
 label {
   @apply block text-sm font-medium text-white;
 }
@@ -21,34 +14,6 @@ input {
   @apply border text-sm rounded-lg block p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500;
 }
 
-ol {
-  @apply max-w-md space-y-1 list-decimal list-inside text-gray-400;
-}
-
-table {
-  @apply table-auto text-sm text-left text-gray-400;
-}
-
-thead {
-  @apply text-xs bg-gray-600 text-gray-400;
-}
-
-thead th {
-  @apply px-6 py-3;
-}
-
-thead th:nth-child(even) {
-  @apply bg-gray-700;
-}
-
-tbody tr {
-  @apply border-b bg-gray-800 border-gray-700;
-}
-
-tbody td {
-  @apply px-6 py-4;
-}
-
-tbody td:nth-child(even) {
-  @apply bg-gray-900;
+.hljs {
+  @apply bg-slate-950!;
 }
