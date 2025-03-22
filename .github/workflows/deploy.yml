@@ -2,7 +2,7 @@ name: Deploy To Github Pages
 
 on:
   push:
-    branches: ["main", "feat/cd"]
+    branches: ["main", "fix/ci"]
 
 jobs:
   build:
@@ -18,7 +18,7 @@ jobs:
     - name: build nu wasm
       run: wasm-pack build --target web --out-dir playground/src/wasm
     - name: Build playground
-      run: bun build
+      run: bun run build
       working-directory: playground
     - name: Create gh-pages worktree
       run: git worktree add --checkout gh-pages
