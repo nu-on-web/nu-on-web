@@ -2,7 +2,7 @@ name: Deploy To Github Pages
 
 on:
   push:
-    branches: ["main", "feat/cd"]
+    branches: ["main", "fix/ci"]
 
 jobs:
   build:
@@ -11,18 +11,17 @@ jobs:
       contents: write
     steps:
     - uses: actions/checkout@v3
-    - uses: pnpm/action-setup@v4
-      with:
-        version: 10
-        run_install: |
-          cwd: playground
+    - uses: oven-sh/setup-bun@v2
+    - name: Install Bun Dependencies
+      run: bun install --frozen-lockfile
+      working-directory: playground
     - uses: jetli/wasm-pack-action@v0.4.0
       with:
         version: 'latest'
     - name: build nu wasm
       run: wasm-pack build --target web --out-dir playground/src/wasm
     - name: Build playground
-      run: pnpm build
+      run: bun run build
       working-directory: playground
     - name: Create gh-pages worktree
       run: git worktree add --checkout gh-pages
