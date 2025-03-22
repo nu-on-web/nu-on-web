@@ -1,20 +1,13 @@
-import * as Monaco from 'monaco-editor'
+import * as Monaco from "monaco-editor";
 import type { Span } from "./types";
-import lineColumn from 'line-column';
+import lineColumn from "line-column";
 
 export function spanToRange(content: string, span: Span): Monaco.Range {
-  const { line: startLineNumber, col: startColumn } = lineColumn(
-    content,
-  ).fromIndex(span.start)!;
-  const { line: endLineNumber, col: endColumn } = lineColumn(
-    content,
-  ).fromIndex(
-    Math.min(content.length - 1, span.end),
-  )!;
-  return new Monaco.Range(
-    startLineNumber,
-    startColumn,
-    endLineNumber,
-    endColumn + 1,
-  );
+  const finder = lineColumn(content);
+  const start = finder.fromIndex(span.start);
+  const end = finder.fromIndex(Math.min(content.length - 1, span.end));
+  if (!start || !end) {
+    return new Monaco.Range(0, 0, 0, 0);
+  }
+  return new Monaco.Range(start.line, start.col, end.line, end.col + 1);
 }
