@@ -14,6 +14,7 @@
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^5.0.3",
     "@tsconfig/svelte": "^5.0.4",
+    "@types/byte-size": "^8.1.2",
     "@types/line-column": "^1.0.2",
     "@types/lodash-es": "^4.17.12",
     "@types/node": "^22.13.9",
@@ -21,14 +22,17 @@
     "daisyui": "^5.0.9",
     "prettier": "^3.5.3",
     "prettier-plugin-svelte": "^3.3.3",
+    "sass-embedded": "^1.86.0",
     "svelte": "^5.20.2",
     "svelte-check": "^4.1.4",
     "typescript": "~5.7.2",
     "vite": "^6.2.0"
   },
   "dependencies": {
+    "@iconify/json": "^2.2.319",
     "@tailwindcss/vite": "^4.0.9",
     "@zenfs/core": "^1.11.4",
+    "byte-size": "^9.0.1",
     "dayjs": "^1.11.13",
     "line-column": "^1.0.2",
     "lodash-es": "^4.17.21",
@@ -38,6 +42,7 @@
     "svelte-highlight": "^7.8.2",
     "svelte-monaco": "^0.4.0",
     "tailwindcss": "^4.0.9",
+    "unplugin-icons": "^22.1.0",
     "zod": "^3.24.2"
   }
 }

@@ -1,3 +1,5 @@
+use std::path;
+
 use nu_engine::command_prelude::*;
 
 use crate::zenfs::{readdir, stat};
@@ -13,7 +15,7 @@ impl Command for Ls {
     fn signature(&self) -> Signature {
         Signature::build("ls").optional(
             "path",
-            SyntaxShape::GlobPattern,
+            SyntaxShape::String,
             "a path to get the directory contents from",
         )
     }
@@ -28,8 +30,8 @@ impl Command for Ls {
         stack: &mut Stack,
         call: &Call,
         input: PipelineData,
-    ) -> Result<PipelineData, ShellError> {
-        let path = call.get_flag::<String>(engine_state, stack, "path")?;
+    ) -> Result<PipelineData, nu_protocol::ShellError> {
+        let path = call.opt::<String>(engine_state, stack, 0)?;
         let path = path.unwrap_or_else(|| ".".to_string());
         let span = input.span().unwrap_or(call.head);
         let metadata = input.metadata();
@@ -43,27 +45,42 @@ impl Command for Ls {
                     inner: Vec::new(),
                 })?
                 .into_iter()
+                .map(|f| path::Path::new(&path).join(f))
+                .map(|path| {
+                    path.strip_prefix("./")
+                        .unwrap_or(&path)
+                        .to_str()
+                        .unwrap()
+                        .to_string()
+                })
                 .map(move |f| {
                     let record = {
                         let mut record = Record::new();
-                        let stats = stat(&f).map_err(|e| ShellError::GenericError {
-                            msg: format!("error: {}", e.to_string()),
-                            error: format!("error: {}", e.to_string()),
-                            span: Some(call.head),
-                            help: None,
-                            inner: Vec::new(),
-                        })?;
-                        record.insert("name", Value::string(f, span));
-                        record.insert("size", Value::filesize(stats.size, span));
-                        record.insert(
-                            "type",
-                            Value::string(if stats.is_directory { "dir" } else { "file" }, span),
-                        );
-                        record
+                        record.insert("name", Value::string(&f, span));
+
+                        let stats = stat(&f);
+                        match stats {
+                            Ok(stats) => {
+                                record.insert("size", Value::filesize(stats.size, span));
+                                record.insert(
+                                    "type",
+                                    Value::string(
+                                        if stats.is_directory { "dir" } else { "file" },
+                                        span,
+                                    ),
+                                );
+                                record
+                            }
+                            Err(_) => {
+                                record.insert("size", Value::filesize(0, span));
+                                record.insert("type", Value::string("?", span));
+                                record
+                            }
+                        }
                     };
-                    Ok(Value::record(record, span))
+                    Value::record(record, span)
                 })
-                .collect::<Result<Vec<_>, ShellError>>()?,
+                .collect(),
             span,
         )
         .into_pipeline_data_with_metadata(metadata))

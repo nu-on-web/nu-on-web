@@ -60,7 +60,8 @@ impl Engine {
         if !working_set.compile_errors.is_empty() {
             return RunCodeResult::CompileErrors(working_set.compile_errors);
         }
-        let delta = working_set.delta;
+        let delta = working_set.render();
+
         self.engine_state
             .merge_delta(delta)
             .expect("engine state merge failed");
