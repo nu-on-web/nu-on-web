@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @plugin "daisyui" {
-  themes: dark --default;
+  themes: business --default;
   root: ":root";
   logs: true;
 }

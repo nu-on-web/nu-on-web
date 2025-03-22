@@ -11,12 +11,12 @@
 
   const { onSend, disable }: Props = $props();
 
-  let value = $state("");
+  let code = $state("");
 
   let editor: Monaco.editor.IStandaloneCodeEditor | undefined;
   function sendCode() {
     if (disable) return;
-    onSend(value);
+    onSend(code);
   }
 
   function handleEditorReady(
@@ -33,11 +33,11 @@
   $effect(() => {
     commandsDecoration?.clear();
     let active = true;
-    getCommandsDescriptions(value).then((commandsDescriptions) => {
+    getCommandsDescriptions(code).then((commandsDescriptions) => {
       if (!active) return;
       commandsDecoration = editor?.createDecorationsCollection(
         commandsDescriptions.map((commandDescription) => ({
-          range: spanToRange(value, commandDescription.span),
+          range: spanToRange(code, commandDescription.span),
           options: {
             hoverMessage: { value: commandDescription.description },
           },
@@ -57,13 +57,14 @@
 <div class="flex gap-2 m-2 h-15 items-center">
   <div class="grow w-full h-full border-r-2 border-2 border-gray-500">
     <MonacoEditor
-      bind:value
+      bind:value={code}
       on:ready={handleEditorReady}
       options={{
         language: "shell",
         theme: "vs-dark",
         minimap: { enabled: false },
         scrollbar: { vertical: "hidden", horizontal: "hidden" },
+        automaticLayout: true,
       }}
     />
   </div>

@@ -1,9 +1,6 @@
 <script lang="ts">
   import { Message } from "../lib/types";
-  import dayjs from "dayjs";
-  import relativeTime from "dayjs/plugin/relativeTime";
   import MessageItem from "./MessageItem.svelte";
-  dayjs.extend(relativeTime);
 
   interface Props {
     class: string;

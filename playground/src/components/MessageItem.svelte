@@ -7,8 +7,10 @@
 
   import dayjs from "dayjs";
   import relativeTime from "dayjs/plugin/relativeTime";
+  import duration from "dayjs/plugin/duration";
 
   dayjs.extend(relativeTime);
+  dayjs.extend(duration);
 
   interface Props {
     message: Message;
@@ -20,7 +22,7 @@
   $effect(() => {
     const interval = setInterval(() => {
       currentTime = new Date();
-    }, 60000);
+    }, dayjs.duration(1, "minutes").asMilliseconds());
     return () => clearInterval(interval);
   });
 
