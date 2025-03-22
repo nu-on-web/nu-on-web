@@ -15,6 +15,7 @@
 
   let editor: Monaco.editor.IStandaloneCodeEditor | undefined;
   function sendCode() {
+    if (disable) return;
     onSend(value);
   }
 
