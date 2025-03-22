@@ -39,6 +39,16 @@ impl Command for Cat {
         let span = input.span().unwrap_or(call.head);
         let metadata = input.metadata();
 
-        Ok(Value::string(readfile(&path), span).into_pipeline_data_with_metadata(metadata))
+        Ok(Value::string(
+            readfile(&path).map_err(|e| ShellError::GenericError {
+                msg: format!("error: {}", e.to_string()),
+                error: format!("error: {}", e.to_string()),
+                span: Some(call.head),
+                help: None,
+                inner: Vec::new(),
+            })?,
+            span,
+        )
+        .into_pipeline_data_with_metadata(metadata))
     }
 }

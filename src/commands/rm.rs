@@ -33,7 +33,14 @@ impl Command for Rm {
         _input: nu_protocol::PipelineData,
     ) -> Result<PipelineData, ShellError> {
         let path: String = call.req(engine_state, stack, 0)?;
-        unlink(&path);
+        unlink(&path).map_err(|e| ShellError::GenericError {
+            msg: format!("error: {}", e.to_string()),
+            error: format!("error: {}", e.to_string()),
+            span: Some(call.head),
+            help: None,
+            inner: Vec::new(),
+        })?;
+
         Ok(PipelineData::empty())
     }
 }
