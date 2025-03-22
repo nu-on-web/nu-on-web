@@ -5,9 +5,11 @@
   import type { Message } from "./lib/types";
 
   let messages = $state<Message[]>([]);
+  let proccessing = $state(false);
 
   function onSend(code: string) {
     messages = [...messages, { type: "user", value: code, time: new Date() }];
+    proccessing = true;
     (async () => {
       const codeToRun = `${code} | to html -d --partial`;
       const result = await runCode(codeToRun);
@@ -15,11 +17,12 @@
         ...messages,
         { type: "nushell", value: result, time: new Date() },
       ];
+      proccessing = false;
     })();
   }
 </script>
 
 <div class="h-screen flex flex-col">
   <Chat class="grow" {messages} />
-  <Prompt {onSend} />
+  <Prompt {onSend} disable={proccessing} />
 </div>

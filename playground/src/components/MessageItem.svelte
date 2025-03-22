@@ -2,6 +2,8 @@
   import Highlight from "svelte-highlight";
   import shell from "svelte-highlight/languages/bash";
   import "svelte-highlight/styles/github-dark.css";
+  import sanitizeHtml from "sanitize-html";
+  import { Message } from "../lib/types";
 
   interface Props {
     message: Message;
@@ -21,7 +23,7 @@
     {#if message.type === "user"}
       <Highlight language={shell} code={message.value}></Highlight>
     {:else if "success" in message.value}
-      {@html message.value.success.String.val}
+      {@html sanitizeHtml(message.value.success.String.val)}
     {:else}
       {JSON.stringify(message.value)}
     {/if}

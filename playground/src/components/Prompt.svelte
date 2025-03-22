@@ -6,9 +6,10 @@
 
   interface Props {
     onSend: (code: string) => void;
+    disable?: boolean;
   }
 
-  const { onSend }: Props = $props();
+  const { onSend, disable }: Props = $props();
 
   let value = $state("");
 
@@ -45,6 +46,10 @@
     return () => {
       active = false;
     };
+  });
+
+  $effect(() => {
+    editor?.updateOptions({ readOnly: disable ?? false });
   });
 </script>
 
