@@ -55,7 +55,7 @@
   :global .response-content {
     div {
       background-color: transparent !important;
-      @apply text-gray-200!;
+      @apply text-gray-200! font-mono!;
     }
 
     ol {

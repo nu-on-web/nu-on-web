@@ -1,9 +1,13 @@
 @import "tailwindcss";
+@import "@fontsource-variable/roboto-mono";
 
 @plugin "daisyui" {
   themes: business --default;
   root: ":root";
   logs: true;
+}
+body {
+  font-family: "Roboto Mono Variable", monospace;
 }
 
 label {
