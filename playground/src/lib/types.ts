@@ -44,8 +44,7 @@ export const Message = z
     }),
     z.object({
       type: z.literal("nushell"),
-      // value: Result,
-      value: z.string(),
+      value: Result,
     }),
   ])
   .and(

@@ -18,6 +18,7 @@
         "svelte-ace": "^1.0.21",
         "svelte-codemirror-editor": "^1.4.1",
         "svelte-file-dropzone": "^2.0.9",
+        "svelte-highlight": "^7.8.2",
         "svelte-monaco": "^0.4.0",
         "svelte-switch-case": "^2.0.0",
         "tailwindcss": "^4.0.9",
@@ -848,6 +849,8 @@
     "svelte-codemirror-editor": ["svelte-codemirror-editor@1.4.1", "", { "peerDependencies": { "codemirror": "^6.0.0", "svelte": "^3.0.0 || ^4.0.0 || ^5.0.0" } }, "sha512-Pv350iro0Y/AZTT/y2OLaonheQqAwl50Hdfipa2Jv1Z04TSP5kPUyxQnRjqxeRW7DXOX9s5Nd11tHdBl9iYSzw=="],
 
     "svelte-file-dropzone": ["svelte-file-dropzone@2.0.9", "", { "dependencies": { "file-selector": "^0.6.0" }, "peerDependencies": { "svelte": "^3.54.0 || ^4.0.0 || ^5" } }, "sha512-+gS9DscyEcy2Q0jhcADPs7uUEnz56YKudKtLGteEGNi4lF7anPTyxDXoDRiNACWzsp3PF5KfYkw0GgrTieZK9Q=="],
+
+    "svelte-highlight": ["svelte-highlight@7.8.2", "", { "dependencies": { "highlight.js": "11.11.1" } }, "sha512-fJZOQtI71CIAOzv43h/cHVDABB3YfWFERGxZx4RisBVHjEuJXfnrrEOhPS0iE2uZUFyQKDWZyzPlcYyBAkH2iA=="],
 
     "svelte-monaco": ["svelte-monaco@0.4.0", "", { "dependencies": { "@monaco-editor/loader": "^1.4.0", "monaco-themes": "^0.4.4" }, "peerDependencies": { "monaco-editor": ">=0.40.0 < 1", "svelte": ">=4.0.0" } }, "sha512-eImYtqdtw0oXnzNmTSeeBYH1/73ECx9gEebaxIqfossd96hIvbZSllNfG092WI7WRDcSzbFrwUVYXTeWBR0WDQ=="],
 
