@@ -29,6 +29,7 @@
     "vite": "^6.2.0"
   },
   "dependencies": {
+    "@fontsource-variable/roboto-mono": "^5.2.5",
     "@iconify/json": "^2.2.319",
     "@tailwindcss/vite": "^4.0.9",
     "@zenfs/core": "^1.11.4",
