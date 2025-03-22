@@ -61,7 +61,9 @@ impl Engine {
             return RunCodeResult::CompileErrors(working_set.compile_errors);
         }
         let delta = working_set.delta;
-        self.engine_state.merge_delta(delta).unwrap();
+        self.engine_state
+            .merge_delta(delta)
+            .expect("engine state merge failed");
 
         let value = eval_block(
             block,
