@@ -49,54 +49,52 @@
   </div>
 </div>
 
-<style lang="scss">
-  @import "tailwindcss";
+<style>
+  :global {
+    @import "tailwindcss";
 
-  :global .response-content {
-    div {
+    .response-content div {
       background-color: transparent !important;
       @apply text-gray-200! font-mono! whitespace-pre-wrap;
     }
 
-    ol {
+    .response-content ol {
       @apply max-w-md space-y-1 list-decimal list-inside p-1;
       list-style: none;
-      li {
-        margin: 0 !important;
-        &:not(:first-child) {
-          counter-increment: list-counter 1;
-        }
-        &::before {
-          content: counter(list-counter) " | ";
-          @apply font-bold text-gray-600;
-        }
-      }
+    }
+    .response-content ol li {
+      margin: 0 !important;
+    }
+    .response-content ol li:not(:first-child) {
+      counter-increment: list-counter 1;
+    }
+    .response-content ol li::before {
+      content: counter(list-counter) " | ";
+      @apply font-bold text-gray-600;
     }
 
-    table {
+    .response-content table {
       @apply table-auto text-sm text-left text-gray-400 shadow-xl;
     }
 
-    thead {
+    .response-content thead {
       @apply text-xs bg-gray-600 text-gray-400;
-      th {
-        @apply px-6 py-3;
-        &:nth-child(even) {
-          @apply bg-gray-700;
-        }
-      }
+    }
+    .response-content thead th {
+      @apply px-6 py-3;
+    }
+    .response-content thead th:nth-child(even) {
+      @apply bg-gray-700;
     }
 
-    tbody {
-      tr {
-        @apply border-b bg-gray-800 border-gray-700;
-      }
-      td {
-        @apply px-6 py-4;
-        &:nth-child(even) {
-          @apply bg-gray-900;
-        }
-      }
+    .response-content tbody tr {
+      @apply border-b bg-gray-800 border-gray-700;
+    }
+    .response-content tbody td {
+      @apply px-6 py-4;
+    }
+    .response-content tbody td:nth-child(even) {
+      @apply bg-gray-900;
     }
   }
 </style>
