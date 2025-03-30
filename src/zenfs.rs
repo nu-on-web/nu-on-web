@@ -1,4 +1,4 @@
-use js_sys::{Error, Reflect};
+use js_sys::{Error, Object, Reflect};
 use wasm_bindgen::prelude::*;
 
 #[derive(Debug)]
@@ -10,7 +10,7 @@ pub struct Stats {
 #[wasm_bindgen(module = "@zenfs/core")]
 extern "C" {
     #[wasm_bindgen(js_namespace = fs, js_name = readFileSync, catch)]
-    pub fn readfile(path: &str) -> Result<String, Error>;
+    pub fn readfile(path: &str, options: Object) -> Result<String, Error>;
     #[wasm_bindgen(js_namespace = fs, js_name = readdirSync, catch)]
     pub fn readdir(path: &str) -> Result<Vec<String>, Error>;
     #[wasm_bindgen(js_namespace = fs, js_name = statSync, catch)]
