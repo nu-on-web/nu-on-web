@@ -1,8 +1,10 @@
+use js_sys::{Object, Reflect};
 use nu_engine::CallExt;
 use nu_protocol::{
     engine::Command, IntoPipelineData, PipelineData, ShellError, Signature, SyntaxShape, Type,
     Value,
 };
+use wasm_bindgen::JsValue;
 
 use crate::zenfs::readfile;
 
@@ -39,8 +41,16 @@ impl Command for Cat {
         let span = input.span().unwrap_or(call.head);
         let metadata = input.metadata();
 
+        let options = Object::new();
+        let _ = Reflect::set(
+            &options,
+            &JsValue::from_str("encoding"),
+            &JsValue::from_str("utf-8"),
+        )
+        .expect("Failed to set property");
+
         Ok(Value::string(
-            readfile(&path).map_err(|e| ShellError::GenericError {
+            readfile(&path, options).map_err(|e| ShellError::GenericError {
                 msg: format!("error: {}", e.to_string()),
                 error: format!("error: {}", e.to_string()),
                 span: Some(call.head),
