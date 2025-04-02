@@ -1,3 +1,4 @@
+import './lib/monaco-config'
 import { mount } from 'svelte'
 import App from './App.svelte'
 
