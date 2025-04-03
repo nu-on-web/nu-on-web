@@ -13,15 +13,18 @@ default = ["console_error_panic_hook"]
 [dependencies]
 wasm-bindgen = "0.2.84"
 console_error_panic_hook = { version = "0.1.7", optional = true }
-nu-cmd-lang = { version = "0.103.0", features = [], default-features = false }
-nu-utils = { version = "0.103.0", features = [], default-features = false }
-nu-protocol = { version = "0.103.0", default-features = false }
+nu-cmd-lang = { path = "./nushell/crates/nu-cmd-lang", features = [
+], default-features = false }
+nu-utils = { path = "./nushell/crates/nu-utils", features = [
+], default-features = false }
+nu-protocol = { path = "./nushell/crates/nu-protocol", default-features = false }
 serde = { version = "1.0.218", features = ["derive"] }
 serde_json = "1.0.139"
-nu-engine = { version = "0.103.0", default-features = false }
-nu-command = { version = "0.103.0", default-features = false, features = [] }
-nu-parser = { version = "0.103.0", default-features = false }
-nu-cmd-extra = "0.103.0"
+nu-engine = { path = "./nushell/crates/nu-engine", default-features = false }
+nu-command = { path = "./nushell/crates/nu-command", default-features = false, features = [
+] }
+nu-parser = { path = "./nushell/crates/nu-parser", default-features = false }
+nu-cmd-extra = { path = "./nushell/crates/nu-cmd-extra", default-features = false }
 serde-wasm-bindgen = "0.6.5"
 js-sys = "0.3.77"
 
