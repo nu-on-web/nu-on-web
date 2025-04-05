@@ -2,7 +2,6 @@
   import FileUpload from "./FileUpload.svelte";
   import { promises as fs, watch } from "@zenfs/core";
   import byteSize from "byte-size";
-  import { onMount } from "svelte";
   import type { MouseEventHandler } from "svelte/elements";
   import Remove from "~icons/si/remove-square-duotone";
 
@@ -50,13 +49,13 @@
         {#each files as file}
           {@const fileSize = byteSize(file.size)}
           <li class="indicator">
-            <span
+            <button
               data-filename={file.name}
               class="indicator-item badge bg-transparent border-0"
               onclick={(e) => {
                 const filename = e.currentTarget?.dataset.filename;
                 fs.unlink(`/files/${filename}`);
-              }}><Remove class="hover:opacity-60 cursor-pointer" /></span
+              }}><Remove class="hover:opacity-60 cursor-pointer" /></button
             >
             <div class="w-full tooltip tooltip-secondary">
               <div class="tooltip-content w-fit min-w-full">

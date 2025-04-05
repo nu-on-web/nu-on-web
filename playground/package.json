@@ -34,19 +34,30 @@
   "dependencies": {
     "@fontsource-variable/roboto-mono": "^5.2.5",
     "@iconify/json": "^2.2.319",
+    "@tailwindcss/postcss": "^4.1.4",
     "@tailwindcss/vite": "^4.0.9",
     "@zenfs/core": "^1.11.4",
+    "ansi-to-html": "^0.7.2",
+    "autoprefixer": "^10.4.21",
     "byte-size": "^9.0.1",
     "dayjs": "^1.11.13",
     "line-column": "^1.0.2",
     "lodash-es": "^4.17.21",
     "monaco-editor": "^0.52.2",
+    "postcss": "^8.5.3",
+    "postcss-preset-env": "^10.1.5",
     "sanitize-html": "^2.15.0",
     "svelte-file-dropzone": "^2.0.9",
     "svelte-highlight": "^7.8.2",
     "svelte-monaco": "^0.4.0",
-    "tailwindcss": "^4.0.9",
+    "tailwindcss": "^4.1.4",
     "unplugin-icons": "^22.1.0",
     "zod": "^3.24.2"
-  }
+  },
+  "browserslist": [
+    "defaults",
+    "chrome 97",
+    "not dead",
+    "not op_mini all"
+  ]
 }

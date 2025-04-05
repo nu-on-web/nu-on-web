@@ -16,7 +16,14 @@
     "isolatedModules": true,
     "moduleDetection": "force",
     "strict": true,
-    "types": ["src/vite-env.d.ts"],
+    "types": [
+      "src/vite-env.d.ts"
+    ],
   },
-  "include": ["src/**/*.ts", "src/**/*.js", "src/**/*.svelte"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.js",
+    "src/**/*.svelte",
+    "postcss.config.js"
+  ]
 }

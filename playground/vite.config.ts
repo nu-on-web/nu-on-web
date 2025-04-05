@@ -1,19 +1,20 @@
 import { defineConfig } from 'vite'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
-import tailwindcss from '@tailwindcss/vite'
+import tailwindcss from '@tailwindcss/postcss'
 import Icons from 'unplugin-icons/vite'
 import path from 'path'
 import fs from 'fs-extra'
 import mime from 'mime-types'
 
-const monacoBasePath = path.dirname(require.resolve('monaco-editor/package.json'))
+import postcssPresetEnv from 'postcss-preset-env'
+
+const monacoBasePath = path.dirname(import.meta.resolve('monaco-editor/package.json')).replace(/^file:/, "")
 const monacoMinPath = path.join(monacoBasePath, 'min/vs')
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
     svelte(),
-    tailwindcss(),
     Icons({ compiler: 'svelte' }),
     {
       name: 'monaco-editor-assets-dev',
@@ -26,20 +27,20 @@ export default defineConfig({
               return next()
             const filePath = path.relative("/nu-on-web/assets/vs/", url)
             const monacoPath = path.join(monacoMinPath, filePath)
-            
+
             if (!await fs.pathExists(monacoPath)) return next()
-            
+
             const stat = await fs.stat(monacoPath)
             if (!stat.isFile()) return next()
-            
+
             const etag = `"${stat.size}-${stat.mtime.getTime()}"`
-            
+
             if (req.headers['if-none-match'] === etag) {
               res.statusCode = 304 // Not Modified
               res.end()
               return
             }
-            
+
             res.setHeader('Content-Type', mime.lookup(monacoPath) || 'application/octet-stream')
             res.setHeader('Content-Length', stat.size)
             res.setHeader('Cache-Control', 'max-age=31536000,immutable') // Cache for 1 year
@@ -64,4 +65,13 @@ export default defineConfig({
     }
   ],
   base: "/nu-on-web/",
+  css: {
+    transformer: 'postcss',
+    postcss: {
+      plugins: [
+        postcssPresetEnv(),
+        tailwindcss()
+      ]
+    }
+  },
 })
