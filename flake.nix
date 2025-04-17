@@ -31,16 +31,14 @@
       devShells.default = pkgs.mkShell {
         buildInputs = with pkgs; [
           rustToolchain
-          rust-analyzer
-
           wasm-pack
+
+          rust-analyzer
 
           nodejs
           bun
 
-          # # Common build dependencies - add or remove as needed
-          # pkg-config
-          # openssl.dev
+          gnumake
         ];
 
         shellHook = ''
