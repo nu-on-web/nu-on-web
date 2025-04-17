@@ -11,18 +11,20 @@ jobs:
       contents: write
     steps:
     - uses: actions/checkout@v3
-    - uses: oven-sh/setup-bun@v2
-    - name: Install Bun Dependencies
+    - uses: cachix/install-nix-action@v31
+      with:
+        github_access_token: ${{ secrets.GITHUB_TOKEN }}
+    - uses: nicknovitski/nix-develop@v1
+
+    - name: Build nu wasm
+      run: make prod
+    - name: Install bun dependencies
       run: bun install --frozen-lockfile
       working-directory: playground
-    - uses: jetli/wasm-pack-action@v0.4.0
-      with:
-        version: 'latest'
-    - name: build nu wasm
-      run: wasm-pack build --target web --no-pack --release --out-dir playground/src/wasm
     - name: Build playground
       run: bun run build
       working-directory: playground
+
     - name: Create gh-pages worktree
       run: git worktree add --checkout gh-pages
     - name: Clear gh-pages worktree
