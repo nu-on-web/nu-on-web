@@ -2,7 +2,7 @@ name: Deploy To Github Pages
 
 on:
   push:
-    branches: ["main", "fix/ci"]
+    branches: ["main", "fix/ci", "chore/ci-cache"]
 
 jobs:
   build:
@@ -11,10 +11,15 @@ jobs:
       contents: write
     steps:
     - uses: actions/checkout@v3
-    - uses: cachix/install-nix-action@v31
+    - name: Install nix
+      uses: cachix/install-nix-action@v31
       with:
         github_access_token: ${{ secrets.GITHUB_TOKEN }}
-    - uses: nicknovitski/nix-develop@v1
+    - name: Nix Develop
+      uses: nicknovitski/nix-develop@v1
+
+    - name: Setup rust cache
+      uses: useblacksmith/rust-cache@v3
 
     - name: Build nu wasm
       run: make prod
