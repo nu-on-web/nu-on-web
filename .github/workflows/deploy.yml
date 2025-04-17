@@ -19,7 +19,7 @@ jobs:
       with:
         version: 'latest'
     - name: build nu wasm
-      run: wasm-pack build --target web --out-dir playground/src/wasm
+      run: wasm-pack build --target web --no-pack --release --out-dir playground/src/wasm
     - name: Build playground
       run: bun run build
       working-directory: playground
