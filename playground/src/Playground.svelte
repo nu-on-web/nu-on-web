@@ -6,20 +6,15 @@
   import Split from "split-grid";
 
   let messages = $state<Message[]>([]);
-  let proccessing = $state(false);
 
   function onSend(code: string) {
     messages = [...messages, { type: "user", value: code, time: new Date() }];
-    proccessing = true;
-    (async () => {
-      const codeToRun = `${code} | to html -d --partial`;
-      const result = await runCode(codeToRun);
-      messages = [
-        ...messages,
-        { type: "nushell", value: result, time: new Date() },
-      ];
-      proccessing = false;
-    })();
+    const codeToRun = `${code} | to html -d --partial`;
+    const result = runCode(codeToRun);
+    messages = [
+      ...messages,
+      { type: "nushell", value: result, time: new Date() },
+    ];
   }
   let gutter = $state<HTMLDivElement>();
   $effect(() => {
@@ -39,7 +34,7 @@
 <div class="playground">
   <Chat class="grow" {messages} />
   <div bind:this={gutter} class="h-2 cursor-row-resize bg-gray-600"></div>
-  <Prompt {onSend} disable={proccessing} />
+  <Prompt {onSend} />
 </div>
 
 <style>
