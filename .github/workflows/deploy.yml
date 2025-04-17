@@ -18,8 +18,6 @@ jobs:
     - name: Nix Develop
       uses: nicknovitski/nix-develop@v1
 
-    - name: Cache dependencies
-      uses: useblacksmith/cache@v5
     - name: Setup rust cache
       uses: useblacksmith/rust-cache@v3
 
