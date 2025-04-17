@@ -53,7 +53,7 @@
   </div>
 </div>
 
-<style lang="postcss" global>
+<style global>
   @reference "tailwindcss";
   :global(.response-content div) {
     @apply text-gray-200 font-mono whitespace-pre-wrap;
