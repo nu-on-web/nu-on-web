@@ -3,6 +3,7 @@ import type { Span } from "./types";
 import lineColumn from "line-column";
 
 export function spanToRange(content: string, span: Span): Monaco.Range {
+  console.log({ content, span })
   const finder = lineColumn(content);
   const start = finder.fromIndex(span.start);
   const end = finder.fromIndex(Math.min(content.length - 1, span.end));
@@ -11,3 +12,11 @@ export function spanToRange(content: string, span: Span): Monaco.Range {
   }
   return new Monaco.Range(start.line, start.col, end.line, end.col + 1);
 }
+
+export function moveSpanByOffset(span: Span, offset: number): Span {
+  return {
+    start: span.start + offset,
+    end: span.end + offset
+  }
+}
+
