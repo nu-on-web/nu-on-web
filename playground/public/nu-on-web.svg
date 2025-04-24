@@ -1,0 +1,25 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="16"
+  height="16"
+  viewBox="0 0 16 16"
+  shape-rendering="crispEdges"
+>
+  <!-- chat bubble outline with a little tail -->
+  <path
+    d="M2 2 L14 2 L14 9 L9 9 L7 12 L7 9 L2 9 Z"
+    stroke="#2ecc71"
+    fill="none"
+    stroke-width="1"
+  />
+  <!-- NuShell prompt inside -->
+  <text
+    x="4"
+    y="8"
+    font-family="monospace"
+    font-size="5"
+    fill="#2ecc71"
+  >
+    ≈&gt;
+  </text>
+</svg>
