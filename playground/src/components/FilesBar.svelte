@@ -79,9 +79,8 @@
           </li>
         {/each}
       </ul>
-    {:catch error}
+    {:catch}
       <span>Failed to load files </span>
-      {error.toString()}
     {/await}
   {/if}
 </aside>
