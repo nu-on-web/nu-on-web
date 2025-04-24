@@ -1,11 +1,17 @@
 <script lang="ts">
   import "./app.css";
   import Playground from "./Playground.svelte";
-  import { fs } from "@zenfs/core";
+  import { configureSingle } from "@zenfs/core";
+  import { mkdir, writeFile, exists } from "@zenfs/core/promises";
+  import { WebStorage } from "@zenfs/dom";
 
   $effect(() => {
-    fs.mkdirSync("/files");
-    fs.writeFileSync("/files/example.json", "[{v:1},{v:2},{v:3}]");
+    configureSingle({ backend: WebStorage, storage: localStorage })
+      .then(() => mkdir("/files", { recursive: true }))
+      .then(() => exists("/files/example.json"))
+      .then((v) =>
+        v ? writeFile("/files/example.json", "[{v:1},{v:2},{v:3}]") : undefined,
+      );
   });
 </script>
 

@@ -7,7 +7,8 @@
         "@fontsource-variable/roboto-mono": "^5.2.5",
         "@iconify/json": "^2.2.319",
         "@tailwindcss/vite": "^4.0.9",
-        "@zenfs/core": "^1.11.4",
+        "@zenfs/core": "2.0.0",
+        "@zenfs/dom": "1.1.6",
         "ansi-to-html": "^0.7.2",
         "autoprefixer": "^10.4.21",
         "byte-size": "^9.0.1",
@@ -222,7 +223,9 @@
 
     "@xterm/xterm": ["@xterm/xterm@5.5.0", "", {}, "sha512-hqJHYaQb5OptNunnyAnkHyM8aCjZ1MEIDTQu1iIbbTD/xops91NB5yq1ZK/dC2JDbVWtF23zUtl9JE2NqwT87A=="],
 
-    "@zenfs/core": ["@zenfs/core@1.11.4", "", { "dependencies": { "@types/node": "^22.10.1", "buffer": "^6.0.3", "eventemitter3": "^5.0.1", "readable-stream": "^4.5.2", "utilium": "^1.3.3" }, "bin": { "zci": "scripts/ci-cli.js", "make-index": "scripts/make-index.js", "zenfs-test": "scripts/test.js" } }, "sha512-jFihhedKitw1X9rlImtaca4KTs1Xk9awo4GxUemqt2ucE1jLi10lyRfFFbiYXZsFDkuCWGHwEQwv7BeDIEXMbQ=="],
+    "@zenfs/core": ["@zenfs/core@2.0.0", "", { "dependencies": { "@types/node": "^22.10.1 <22.13.7", "buffer": "^6.0.3", "eventemitter3": "^5.0.1", "readable-stream": "^4.5.2", "utilium": "^1.8.0" }, "bin": { "zci": "scripts/ci-cli.js", "make-index": "scripts/make-index.js", "zenfs-test": "scripts/test.js" } }, "sha512-wOKNFTY1DJ1vdLqKdU7M8cRh0nVYZcDVu7WHuk/3u49hrSwTZVm4PzGxJUjFd8O9Wi3U5nYTbZoN7RX5mS2ldA=="],
+
+    "@zenfs/dom": ["@zenfs/dom@1.1.6", "", { "peerDependencies": { "@zenfs/core": "^2.0.0", "utilium": "^1.9.0" } }, "sha512-7SBTWgA0esuEv/TE+N/xk6W/XJf8uBF+LhlPNHQdXds0H7aOy/UYsWv/8glvARe+meDMMidoeWFLzUWoMXfjlA=="],
 
     "abort-controller": ["abort-controller@3.0.0", "", { "dependencies": { "event-target-shim": "^5.0.0" } }, "sha512-h8lQ8tacZYnR3vNQTgibj+tODHI5/+l06Au2Pcriv/Gmet0eaj4TwWH41sO9wnHDiQsEj19q0drzdWdeAHtweg=="],
 
@@ -486,6 +489,8 @@
 
     "@tailwindcss/oxide-wasm32-wasi/tslib": ["tslib@2.8.1", "", { "bundled": true }, "sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w=="],
 
+    "@zenfs/core/@types/node": ["@types/node@22.13.6", "", { "dependencies": { "undici-types": "~6.20.0" } }, "sha512-GYmF65GI7417CpZXsEXMjT8goQQDnpRnJnDw6jIYa+le3V/lMazPZ4vZmK1B/9R17fh2VLr2zuy9d/h5xgrLAg=="],
+
     "dom-serializer/entities": ["entities@4.5.0", "", {}, "sha512-V0hjH4dGPh9Ao5p0MoRY6BVqtwCjhz6vI5LT8AJ55H+4g9/4vbHx1I54fS0XuclLhDHArPQCiMjDxjaL8fPxhw=="],
 
     "htmlparser2/entities": ["entities@4.5.0", "", {}, "sha512-V0hjH4dGPh9Ao5p0MoRY6BVqtwCjhz6vI5LT8AJ55H+4g9/4vbHx1I54fS0XuclLhDHArPQCiMjDxjaL8fPxhw=="],
@@ -515,6 +520,8 @@
     "@tailwindcss/node/lightningcss/lightningcss-win32-arm64-msvc": ["lightningcss-win32-arm64-msvc@1.29.2", "", { "os": "win32", "cpu": "arm64" }, "sha512-nL7zRW6evGQqYVu/bKGK+zShyz8OVzsCotFgc7judbt6wnB2KbiKKJwBE4SGoDBQ1O94RjW4asrCjQL4i8Fhbw=="],
 
     "@tailwindcss/node/lightningcss/lightningcss-win32-x64-msvc": ["lightningcss-win32-x64-msvc@1.29.2", "", { "os": "win32", "cpu": "x64" }, "sha512-EdIUW3B2vLuHmv7urfzMI/h2fmlnOQBk1xlsDxkN1tCWKjNFjfLhGxYk8C8mzpSfr+A6jFFIi8fU6LbQGsRWjA=="],
+
+    "@zenfs/core/@types/node/undici-types": ["undici-types@6.20.0", "", {}, "sha512-Ny6QZ2Nju20vw1SRHe3d9jVu6gJ+4e3+MMpqu7pqE5HT6WsTSlce++GQmK5UXS8mzV8DSYHrQH+Xrf2jVcuKNg=="],
 
     "mlly/pkg-types/confbox": ["confbox@0.1.8", "", {}, "sha512-RMtmw0iFkeR4YV+fUOSucriAQNb9g8zFR52MWCtl+cCZOFRNL6zeB395vPzFhEjjn4fMxXudmELnl/KF/WrK6w=="],
   }
