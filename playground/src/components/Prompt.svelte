@@ -72,7 +72,7 @@
       code = `${code.substring(0, offset)}/files/${file} ${code.substring(offset)}`;
     }}
   />
-  <div class="flex w-full gap-2 mx-2 a items-center">
+  <div class="flex w-full gap-2 mx-2 editor-container items-center">
     <div class="grow w-full h-full border-r-2 border-2 border-gray-500">
       <MonacoEditor
         bind:value={code}
@@ -95,7 +95,7 @@
 </div>
 
 <style>
-  .a {
+  .editor-container {
     height: calc(100% - 75px);
   }
 </style>
