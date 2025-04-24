@@ -53,7 +53,6 @@
 
   $effect(() => {
     editor?.updateOptions({ readOnly: disable ?? false });
-    editor?.layout();
   });
 </script>
 
