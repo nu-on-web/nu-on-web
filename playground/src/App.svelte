@@ -5,7 +5,7 @@
   import { mkdir, writeFile, exists } from "@zenfs/core/promises";
   import { WebStorage } from "@zenfs/dom";
 
-  let v = (async () => {
+  let fsSetupPromise = (async () => {
     await configureSingle({ backend: WebStorage });
     await mkdir("/files", { recursive: true });
     if (!(await exists("/files/example.json")))
@@ -15,7 +15,7 @@
   );
 </script>
 
-{#await v}
+{#await fsSetupPromise}
   <div class="flex items-center justify-center h-screen">
     <span class="loading loading-spinner loading-lg"></span>
   </div>
