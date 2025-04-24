@@ -10,7 +10,9 @@
     await mkdir("/files", { recursive: true });
     if (!(await exists("/files/example.json")))
       await writeFile("/files/example.json", "[{v:1},{v:2},{v:3}]");
-  })();
+  })().catch((error) =>
+    console.error("Error in setting up the filesystem:", error),
+  );
 </script>
 
 {#await v}
