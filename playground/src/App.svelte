@@ -8,7 +8,7 @@
   let v = (async () => {
     await configureSingle({ backend: WebStorage });
     await mkdir("/files", { recursive: true });
-    if (await exists("/files/example.json"))
+    if (!(await exists("/files/example.json")))
       await writeFile("/files/example.json", "[{v:1},{v:2},{v:3}]");
   })();
 </script>
