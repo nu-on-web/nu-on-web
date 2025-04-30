@@ -1351,7 +1351,7 @@ dependencies = [
  "nu-parser",
  "nu-pretty-hex",
  "nu-protocol",
- "nu-utils",
+ "nu-utils 0.103.0",
  "num-traits",
  "rust-embed",
  "serde",
@@ -1369,7 +1369,7 @@ dependencies = [
  "nu-engine",
  "nu-parser",
  "nu-protocol",
- "nu-utils",
+ "nu-utils 0.103.0",
  "shadow-rs",
 ]
 
@@ -1436,7 +1436,7 @@ dependencies = [
  "nu-system",
  "nu-table",
  "nu-term-grid",
- "nu-utils",
+ "nu-utils 0.103.0",
  "num-format",
  "num-traits",
  "nuon",
@@ -1494,7 +1494,7 @@ dependencies = [
  "nu-glob",
  "nu-path",
  "nu-protocol",
- "nu-utils",
+ "nu-utils 0.103.0",
 ]
 
 [[package]]
@@ -1531,7 +1531,7 @@ dependencies = [
  "nu-engine",
  "nu-path",
  "nu-protocol",
- "nu-utils",
+ "nu-utils 0.103.0",
  "serde_json",
 ]
 
@@ -1578,7 +1578,7 @@ dependencies = [
  "nu-derive-value",
  "nu-path",
  "nu-system",
- "nu-utils",
+ "nu-utils 0.103.0",
  "num-format",
  "serde",
  "serde_json",
@@ -1621,7 +1621,7 @@ dependencies = [
  "nu-color-config",
  "nu-engine",
  "nu-protocol",
- "nu-utils",
+ "nu-utils 0.103.0",
  "tabled",
 ]
 
@@ -1631,7 +1631,7 @@ version = "0.103.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f16be75e959343a65be5e2604902184b72448a21ce4fba22de9cc52371b76e8c"
 dependencies = [
- "nu-utils",
+ "nu-utils 0.103.0",
  "unicode-width 0.2.0",
 ]
 
@@ -1640,6 +1640,25 @@ name = "nu-utils"
 version = "0.103.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2f01345a3c94f75397020250286c536e1b306cb714b2931c1a1c9a3318254793"
+dependencies = [
+ "crossterm_winapi",
+ "fancy-regex",
+ "log",
+ "lscolors",
+ "nix",
+ "num-format",
+ "serde",
+ "serde_json",
+ "strip-ansi-escapes",
+ "sys-locale",
+ "unicase",
+]
+
+[[package]]
+name = "nu-utils"
+version = "0.104.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "327999b774d78b301a6b68c33d312a1a8047c59fb8971b6552ebf823251f1481"
 dependencies = [
  "crossterm_winapi",
  "fancy-regex",
@@ -1703,7 +1722,7 @@ dependencies = [
  "nu-engine",
  "nu-parser",
  "nu-protocol",
- "nu-utils",
+ "nu-utils 0.103.0",
 ]
 
 [[package]]
@@ -1718,7 +1737,7 @@ dependencies = [
  "nu-engine",
  "nu-parser",
  "nu-protocol",
- "nu-utils",
+ "nu-utils 0.104.0",
  "serde",
  "serde-wasm-bindgen",
  "serde_json",
