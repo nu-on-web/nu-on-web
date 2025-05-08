@@ -6,8 +6,11 @@
   root: ":root";
   logs: true;
 }
+
 body {
   font-family: "Roboto Mono Variable", monospace;
+  height: 100vh;
+  overflow: hidden;
 }
 
 label {

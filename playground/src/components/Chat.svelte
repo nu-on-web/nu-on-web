@@ -3,7 +3,7 @@
   import MessageItem from "./MessageItem.svelte";
 
   interface Props {
-    class: string;
+    class?: string;
     messages: Message[];
   }
 
