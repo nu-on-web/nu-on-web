@@ -69,7 +69,9 @@
 
 <div class="h-full flex flex-col gap-4">
   <FilesBar class="w-full" {onFileClick} />
-  <div class="flex flex-1 w-full gap-4 items-stretch bg-gray-800 p-4 rounded-lg overflow-hidden">
+  <div
+    class="flex flex-1 w-full gap-4 items-stretch bg-gray-800 p-4 rounded-lg overflow-hidden"
+  >
     <div class="flex-1 border border-gray-600 rounded-md overflow-hidden">
       <MonacoEditor
         bind:value={code}
@@ -89,7 +91,7 @@
     <button
       class="btn btn-success px-4 py-2 self-start flex items-center gap-2"
       disabled={!code}
-      on:click={sendCode}
+      onclick={sendCode}
     >
       <Run class="w-5 h-5" /> Run
     </button>
