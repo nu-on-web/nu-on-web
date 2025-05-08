@@ -85,6 +85,7 @@
           lineNumbers: "off",
           wordWrap: "on",
           fontSize: 14,
+          padding: { top: 14 },
         }}
       />
     </div>
