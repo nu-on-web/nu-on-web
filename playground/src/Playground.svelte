@@ -38,7 +38,7 @@
 
 <div class="playground">
   <Chat class="grow" {messages} />
-  <div bind:this={gutter} class="gutter"></div>
+  <div bind:this={gutter} class="h-2 cursor-row-resize bg-gray-600"></div>
   <Prompt {onSend} disable={proccessing} />
 </div>
 
@@ -48,10 +48,5 @@
     display: grid;
     /* row heights: chat (flex), gutter (auto), prompt (initial 150px) */
     grid-template-rows: 1fr auto 150px;
-  }
-  .gutter {
-    height: 8px;
-    cursor: row-resize;
-    background-color: #4b5563; /* Tailwind gray-600 */
   }
 </style>
