@@ -67,10 +67,10 @@
   };
 </script>
 
-<div class="grid grid-rows-[auto_1fr] gap-2 mx-2">
+<div class="h-full flex flex-col gap-4">
   <FilesBar class="w-full" {onFileClick} />
-  <div class="grid grid-cols-[1fr_auto] w-full gap-2 my-2 items-center">
-    <div class="h-full max-h-[99%] border-r-2 border-2 border-gray-500">
+  <div class="flex flex-1 w-full gap-4 items-stretch bg-gray-800 p-4 rounded-lg overflow-hidden">
+    <div class="flex-1 border border-gray-600 rounded-md overflow-hidden">
       <MonacoEditor
         bind:value={code}
         on:ready={handleEditorReady}
@@ -78,15 +78,20 @@
           language: "shell",
           theme: "vs-dark",
           minimap: { enabled: false },
-          scrollbar: { vertical: "hidden", horizontal: "hidden" },
+          scrollbar: { vertical: "auto", horizontal: "auto" },
           automaticLayout: true,
+          lineNumbers: "off",
+          wordWrap: "on",
+          fontSize: 14,
         }}
       />
     </div>
     <button
-      class="btn bg-green-700 transition-colors duration-200 hover:bg-green-800"
+      class="btn btn-success px-4 py-2 self-start flex items-center gap-2"
       disabled={!code}
-      onclick={sendCode}>Run <Run /></button
+      on:click={sendCode}
     >
+      <Run class="w-5 h-5" /> Run
+    </button>
   </div>
 </div>

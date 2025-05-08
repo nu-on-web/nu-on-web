@@ -38,10 +38,7 @@
 
 <div class="playground">
   <Chat class="grow" {messages} />
-  <div
-    bind:this={gutter}
-    class="cursor-row-resize bg-white opacity-10 hover:opacity-30 active:opacity-50"
-  ></div>
+  <div bind:this={gutter} class="gutter"></div>
   <Prompt {onSend} disable={proccessing} />
 </div>
 
@@ -49,6 +46,12 @@
   .playground {
     height: 100vh;
     display: grid;
-    grid-template-rows: 1fr 10px 150px;
+    /* row heights: chat (flex), gutter (auto), prompt (initial 150px) */
+    grid-template-rows: 1fr auto 150px;
+  }
+  .gutter {
+    height: 8px;
+    cursor: row-resize;
+    background-color: #4b5563; /* Tailwind gray-600 */
   }
 </style>
