@@ -19,16 +19,22 @@
     onSend(code);
   }
 
-  const onFileClick = (filename: string) => {
+  const onFileClick = (file: string) => {
     if (!editor) return;
     const position = editor.getPosition();
+    const insertPath = `/files/${file}`;
     if (!code || !position) {
-      code = `cat /files/${filename}`;
+      code = `cat ${insertPath}`;
+      editor.focus();
       return;
     }
     const offset = editor.getModel()?.getOffsetAt(position);
-    if (offset === undefined) return;
-    code = `${code.substring(0, offset)}/files/${filename} ${code.substring(offset)}`;
+    if (offset === undefined) {
+      editor.focus();
+      return;
+    }
+    code = `${code.substring(0, offset)}${insertPath} ${code.substring(offset)}`;
+    editor.focus();
   };
 </script>
 
