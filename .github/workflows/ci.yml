@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: blacksmith-4vcpu-ubuntu-2204
+    permissions:
+      contents: read
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install nix
+      uses: cachix/install-nix-action@v31
+      with:
+        github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Nix Develop
+      uses: nicknovitski/nix-develop@v1
+
+    - name: Setup Rust cache
+      uses: useblacksmith/rust-cache@v3
+
+    - name: Cargo check
+      run: cargo check --all-targets --all-features
+
+    - name: Cargo clippy
+      run: cargo clippy --all-targets --all-features -- -D warnings
+
+    - name: Install bun dependencies
+      run: bun install --frozen-lockfile
+      working-directory: playground
+
+    - name: ESLint & TS check
+      run: bun run lint
+      working-directory: playground
