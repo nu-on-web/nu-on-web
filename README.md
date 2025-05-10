@@ -4,7 +4,7 @@ A WebAssembly port of [NuShell](https://www.nushell.sh), enabling you to run NuS
 
 ## Demo
 
-Explore the live demo here: https://nu-on-web.github.io/nu-on-web/
+Explore the live demo here: [Live Demo](https://nu-on-web.github.io/nu-on-web/)
 
 ## Features
 
