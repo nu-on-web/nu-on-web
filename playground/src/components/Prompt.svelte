@@ -1,8 +1,6 @@
 <script lang="ts">
-  import MonacoEditor from "svelte-monaco";
-  import * as Monaco from "monaco-editor";
-  import { getCommandsDescriptions } from "../lib/nushell";
-  import { spanToRange } from "../lib/utils";
+  import * as monaco from "monaco-editor";
+  import Editor from "./Editor.svelte";
   import FilesBar from "./FilesBar.svelte";
   import Run from "~icons/si/terminal-duotone";
 
@@ -14,56 +12,23 @@
   const { onSend, disable }: Props = $props();
 
   let code = $state("");
+  let editor = $state<monaco.editor.IStandaloneCodeEditor>();
 
-  let editor: Monaco.editor.IStandaloneCodeEditor | undefined;
   function sendCode() {
     if (disable) return;
     onSend(code);
   }
 
-  function handleEditorReady(
-    event: CustomEvent<Monaco.editor.IStandaloneCodeEditor>,
-  ) {
-    editor = event.detail;
-    editor.addCommand(Monaco.KeyCode.Enter, sendCode);
-  }
-
-  let commandsDecoration:
-    | Monaco.editor.IEditorDecorationsCollection
-    | undefined;
-
-  $effect(() => {
-    commandsDecoration?.clear();
-    let active = true;
-    getCommandsDescriptions(code).then((commandsDescriptions) => {
-      if (!active) return;
-      commandsDecoration = editor?.createDecorationsCollection(
-        commandsDescriptions.map((commandDescription) => ({
-          range: spanToRange(code, commandDescription.span),
-          options: {
-            hoverMessage: { value: commandDescription.description },
-          },
-        })),
-      );
-    });
-    return () => {
-      active = false;
-    };
-  });
-
-  $effect(() => {
-    editor?.updateOptions({ readOnly: disable ?? false });
-  });
-  const onFileClick = (file) => {
+  const onFileClick = (filename: string) => {
     if (!editor) return;
     const position = editor.getPosition();
     if (!code || !position) {
-      code = `cat /files/${file}`;
+      code = `cat /files/${filename}`;
       return;
     }
     const offset = editor.getModel()?.getOffsetAt(position);
     if (offset === undefined) return;
-    code = `${code.substring(0, offset)}/files/${file} ${code.substring(offset)}`;
+    code = `${code.substring(0, offset)}/files/${filename} ${code.substring(offset)}`;
   };
 </script>
 
@@ -73,21 +38,7 @@
     class="flex flex-1 w-full gap-4 items-stretch bg-gray-800 p-4 rounded-lg overflow-hidden"
   >
     <div class="flex-1 border border-gray-600 rounded-md overflow-hidden">
-      <MonacoEditor
-        bind:value={code}
-        on:ready={handleEditorReady}
-        options={{
-          language: "shell",
-          theme: "vs-dark",
-          minimap: { enabled: false },
-          scrollbar: { vertical: "auto", horizontal: "auto" },
-          automaticLayout: true,
-          lineNumbers: "off",
-          wordWrap: "on",
-          fontSize: 14,
-          padding: { top: 14 },
-        }}
-      />
+      <Editor bind:editor bind:code {disable} onEnter={sendCode} />
     </div>
     <button
       class="btn btn-success px-4 py-2 self-start flex items-center gap-2"

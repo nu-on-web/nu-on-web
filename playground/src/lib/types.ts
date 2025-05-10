@@ -53,3 +53,17 @@ export const Message = z
     }),
   );
 export type Message = z.infer<typeof Message>;
+
+export const Expression = z.object({
+  Call: z.object({
+    head: Span,
+    decl_id: z.number()
+  })
+})
+export type Expression = z.infer<typeof Expression>
+
+export const PipelineElement = z.object({
+  expr: Expression,
+  span: Span
+})
+export type PipelineElement = z.infer<typeof PipelineElement>

@@ -1,9 +1,9 @@
 use nu_cmd_lang::{create_default_context, eval_block};
 use nu_protocol::{
-    ast::Block,
-    engine::{EngineState, StateWorkingSet},
+    ast::{Block, Expr, Expression, FindMapResult, Traverse},
+    engine::{Command, EngineState, StateWorkingSet},
     ir::Instruction,
-    CompileError, ParseError, PipelineData, Span, Value,
+    CompileError, DeclId, ParseError, PipelineData, Span, Value,
 };
 use serde::Serialize;
 use std::{path::Path, sync::Arc};
@@ -100,10 +100,86 @@ impl Engine {
                 .collect()
         })
     }
+    pub fn get_pipeline_element_by_position(
+        &mut self,
+        code: &str,
+        offset: usize,
+    ) -> Option<Expression> {
+        let next_span_start = self.engine_state.next_span_start();
+        let (block, working_set) = self.parse(code);
+        block
+            .find_map(&working_set, &|expr| {
+                find_pipeline_element_by_position(expr, &working_set, next_span_start + offset)
+            })
+            .cloned()
+    }
+
+    pub fn get_declaration_by_id(&self, decl_id: DeclId) -> &dyn Command {
+        self.engine_state.get_decl(decl_id)
+    }
+
+    pub fn get_next_span_start(&self) -> usize {
+        self.engine_state.next_span_start()
+    }
 }
 
 impl Default for Engine {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+// Copied from nu-cli crate (https://github.com/nushell/nushell/blob/8352a09117f9d0f40204ca1fc4b191d800d1cb77/crates/nu-cli/src/completions/completer.rs#L23).
+fn find_pipeline_element_by_position<'a>(
+    expr: &'a Expression,
+    working_set: &'a StateWorkingSet,
+    offset: usize,
+) -> FindMapResult<&'a Expression> {
+    // skip the entire expression if the position is not in it
+    if !expr.span.contains(offset) {
+        return FindMapResult::Stop;
+    }
+    let closure =
+        |expr: &'a Expression| find_pipeline_element_by_position(expr, working_set, offset);
+    match &expr.expr {
+        Expr::Call(call) => call
+            .arguments
+            .iter()
+            .find_map(|arg| arg.expr().and_then(|e| e.find_map(working_set, &closure)))
+            // if no inner call/external_call found, then this is the inner-most one
+            .or(Some(expr))
+            .map(FindMapResult::Found)
+            .unwrap_or_default(),
+        Expr::ExternalCall(head, arguments) => arguments
+            .iter()
+            .find_map(|arg| arg.expr().find_map(working_set, &closure))
+            .or(head.as_ref().find_map(working_set, &closure))
+            .or(Some(expr))
+            .map(FindMapResult::Found)
+            .unwrap_or_default(),
+        // complete the operator
+        Expr::BinaryOp(lhs, _, rhs) => lhs
+            .find_map(working_set, &closure)
+            .or(rhs.find_map(working_set, &closure))
+            .or(Some(expr))
+            .map(FindMapResult::Found)
+            .unwrap_or_default(),
+        Expr::FullCellPath(fcp) => fcp
+            .head
+            .find_map(working_set, &closure)
+            .or(Some(expr))
+            .map(FindMapResult::Found)
+            .unwrap_or_default(),
+        Expr::Var(_) => FindMapResult::Found(expr),
+        Expr::AttributeBlock(ab) => ab
+            .attributes
+            .iter()
+            .map(|attr| &attr.expr)
+            .chain(Some(ab.item.as_ref()))
+            .find_map(|expr| expr.find_map(working_set, &closure))
+            .or(Some(expr))
+            .map(FindMapResult::Found)
+            .unwrap_or_default(),
+        _ => FindMapResult::Continue,
     }
 }

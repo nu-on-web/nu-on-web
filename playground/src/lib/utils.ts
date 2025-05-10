@@ -11,3 +11,11 @@ export function spanToRange(content: string, span: Span): Monaco.Range {
   }
   return new Monaco.Range(start.line, start.col, end.line, end.col + 1);
 }
+
+export function moveSpanByOffset(span: Span, offset: number): Span {
+  return {
+    start: span.start + offset,
+    end: span.end + offset
+  }
+}
+
