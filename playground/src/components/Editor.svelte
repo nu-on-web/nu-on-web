@@ -4,6 +4,7 @@
   import {
     addDefinitionProvider,
     addCommandsDecoration,
+    addAutoCompletions,
   } from "../lib/editor-ops/";
 
   interface Props {
@@ -31,6 +32,7 @@
       automaticLayout: true,
       lineNumbers: "off",
       wordWrap: "on",
+      tabCompletion: "on",
       fontSize: 14,
       padding: { top: 14 },
     });
@@ -43,9 +45,12 @@
 
     const commandsDecoration = addCommandsDecoration(editor);
 
+    const autoCompleter = addAutoCompletions();
+
     return () => {
       definitionProvider.dispose();
       commandsDecoration?.dispose();
+      autoCompleter.dispose();
     };
   });
 
@@ -72,7 +77,38 @@
 
   $effect(() => {
     if (!editor) return;
-    editor.addCommand(monaco.KeyCode.Enter, () => onEnter?.());
+    const controller = editor.getContribution(
+      "editor.contrib.suggestController",
+    ) as any;
+    editor.addCommand(
+      monaco.KeyCode.Enter,
+      () => {
+        console.log(123, controller);
+        if (controller?.model?.state) return;
+        onEnter?.();
+      },
+      "!autoCompleteIsOpen",
+    );
+  });
+  $effect(() => {
+    if (!editor) return;
+    let ctx = editor.createContextKey<boolean>("autoCompleteIsOpen", false);
+    const suggestController = editor.getContribution(
+      "editor.contrib.suggestController",
+    );
+
+    // Check if the suggest controller and widget exist
+    if (suggestController && suggestController.widget) {
+      // Listen for the suggestion popup opening
+      suggestController.widget.value.onDidShow(() => {
+        ctx.set(true);
+      });
+
+      // Listen for the suggestion popup closing
+      suggestController.widget.value.onDidHide(() => {
+        ctx.set(false);
+      });
+    }
   });
 </script>
 

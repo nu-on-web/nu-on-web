@@ -8,7 +8,7 @@ use nu_protocol::{
 use serde::Serialize;
 use std::{path::Path, sync::Arc};
 
-use crate::commands;
+use crate::{commands, utils::log};
 
 #[derive(Serialize, Debug)]
 #[serde(rename_all(serialize = "camelCase", deserialize = "camelCase"))]
@@ -120,6 +120,53 @@ impl Engine {
 
     pub fn get_next_span_start(&self) -> usize {
         self.engine_state.next_span_start()
+    }
+
+    pub fn fetch_completions(&mut self, code: &str, pos: usize) -> (Option<Span>, Vec<String>) {
+        // XXX: try to use self.parse
+        let mut working_set = StateWorkingSet::new(&self.engine_state);
+        let block = nu_parser::parse(&mut working_set, None, code.as_bytes(), false);
+        let offset = self.engine_state.next_span_start();
+
+        let pos_to_search = pos + offset;
+        log(&format!("pos_to_search: {}", pos_to_search));
+
+        let Some(element_expression) = block.find_map(&working_set, &|expr: &Expression| {
+            find_pipeline_element_by_position(expr, &working_set, pos_to_search)
+        }) else {
+            return (None, vec![]);
+        };
+
+        match &element_expression.expr {
+            Expr::ExternalCall(expr, _) => {
+                let start_offset = element_expression.span.start - offset;
+                log(&format!("element_expression: {:#?}", element_expression));
+                log(&format!("start_offset: {}", start_offset));
+                log(&format!(
+                    "element_expression: {}",
+                    element_expression
+                        .as_string()
+                        .unwrap_or("<unknown>".to_string())
+                ));
+                let Some(prefix) = code.get(start_offset..pos) else {
+                    return (None, vec![]);
+                };
+                log(&format!("prefix: {}", prefix));
+
+                (
+                    Some(expr.span),
+                    self.engine_state
+                        .find_commands_by_predicate(
+                            |name| name.starts_with(prefix.as_bytes()),
+                            true,
+                        )
+                        .into_iter()
+                        .map(|i| String::from_utf8_lossy(&i.1).to_string())
+                        .collect(),
+                )
+            }
+            _ => (None, vec![]),
+        }
     }
 }
 

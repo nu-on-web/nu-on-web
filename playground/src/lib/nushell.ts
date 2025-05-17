@@ -4,10 +4,11 @@ import init, {
   find_pipeline_element_by_position,
   get_declaration,
   get_next_span_start,
+  fetch_completions
 } from "../wasm/nushell_wasm";
 import { z } from 'zod'
 
-import { Result, GetCommandsDescriptionsResult, PipelineElement } from "./types";
+import { Result, GetCommandsDescriptionsResult, PipelineElement, Span } from "./types";
 
 export { init }
 
@@ -31,4 +32,8 @@ export function getDeclarationNameFromId(declarationId: number) {
 }
 export function getNextSpanStart() {
   return z.number().parse(get_next_span_start())
+}
+
+export function fetchCompletions(code: string, pos: number) {
+  return z.tuple([Span.optional(), z.string().array()]).parse(fetch_completions(code, pos));
 }
