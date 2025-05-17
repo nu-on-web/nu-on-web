@@ -4,6 +4,7 @@
   import {
     addDefinitionProvider,
     addCommandsDecoration,
+    addAutoCompletions,
   } from "../lib/editor-ops/";
 
   interface Props {
@@ -19,6 +20,8 @@
     onEnter,
   }: Props = $props();
 
+  const IS_AUTOCOMPLETE_OPEN_CTX_KEY = "isAutoCompleteOpen";
+
   let editorContainer = $state<HTMLDivElement>();
 
   $effect(() => {
@@ -31,6 +34,7 @@
       automaticLayout: true,
       lineNumbers: "off",
       wordWrap: "on",
+      tabCompletion: "on",
       fontSize: 14,
       padding: { top: 14 },
     });
@@ -43,9 +47,12 @@
 
     const commandsDecoration = addCommandsDecoration(editor);
 
+    const autoCompleter = addAutoCompletions();
+
     return () => {
       definitionProvider.dispose();
       commandsDecoration?.dispose();
+      autoCompleter.dispose();
     };
   });
 
@@ -72,7 +79,31 @@
 
   $effect(() => {
     if (!editor) return;
-    editor.addCommand(monaco.KeyCode.Enter, () => onEnter?.());
+
+    let isAutoCompleteOpenCtx = editor.createContextKey<boolean>(
+      IS_AUTOCOMPLETE_OPEN_CTX_KEY,
+      false,
+    );
+
+    const suggestController = editor.getContribution(
+      "editor.contrib.suggestController",
+    ) as any;
+
+    editor.addCommand(
+      monaco.KeyCode.Enter,
+      () => {
+        onEnter?.();
+      },
+      `!${IS_AUTOCOMPLETE_OPEN_CTX_KEY}`, // run onEnter only when the suggestion popup is closed
+    );
+
+    suggestController?.widget.value.onDidShow(() =>
+      isAutoCompleteOpenCtx.set(true),
+    );
+
+    suggestController?.widget.value.onDidHide(() =>
+      isAutoCompleteOpenCtx.set(false),
+    );
   });
 </script>
 
