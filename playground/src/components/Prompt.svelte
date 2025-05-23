@@ -13,7 +13,7 @@
   const { onSend, disable }: Props = $props();
 
   let code = $state("");
-  let editor = $state<Editor>();
+  let editor: Editor;
 
   function sendCode() {
     if (disable) return;
