@@ -22,9 +22,8 @@
 
   const onFileClick = (file: string) => {
     if (!editor) return;
-    const insertPath = `/files/${file}`;
-    if (isEmpty(code)) code = `cat ${insertPath}`;
-    else editor.insertAtCursor(`${insertPath} `);
+    const text = isEmpty(code) ? `cat /files/${file}` : `/files/${file} `;
+    editor.insertAtCursor(text);
     editor.focus();
   };
 </script>

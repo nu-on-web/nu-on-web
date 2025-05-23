@@ -5,6 +5,7 @@
     addDefinitionProvider,
     addCommandsDecoration,
   } from "../lib/editor-ops";
+  import { setContext } from "svelte";
 
   interface Props {
     code?: string;
@@ -14,29 +15,11 @@
 
   let { code = $bindable(), disable, onEnter }: Props = $props();
 
-  let editorContainer = $state<HTMLDivElement>();
   let editor: monaco.editor.IStandaloneCodeEditor | undefined;
-
-  $effect(() => {
-    if (!editorContainer) return;
-    editor = monaco.editor.create(editorContainer, {
-      language: LANG,
-      theme: "vs-dark",
-      minimap: { enabled: false },
-      scrollbar: { vertical: "auto", horizontal: "auto" },
-      automaticLayout: true,
-      lineNumbers: "off",
-      wordWrap: "on",
-      fontSize: 14,
-      padding: { top: 14 },
-    });
-    return () => editor?.dispose();
-  });
 
   $effect(() => {
     if (!editor) return;
     const definitionProvider = addDefinitionProvider(editor);
-
     const commandsDecoration = addCommandsDecoration(editor);
 
     return () => {
@@ -77,15 +60,41 @@
 
   export function insertAtCursor(text: string) {
     if (!editor) return;
-    const position = editor.getPosition();
-    if (!code || !position) {
-      code = text;
+    const selection = editor.getSelection();
+    if (!code || !selection) {
+      editor.setValue(text);
+      editor.setPosition({ lineNumber: 1, column: text.length + 1 });
       return;
     }
-    const offset = editor.getModel()?.getOffsetAt(position);
-    if (offset === undefined) return;
-    code = `${code.substring(0, offset)}${text}${code.substring(offset)}`;
+
+    const startOffset = editor
+      .getModel()
+      ?.getOffsetAt(selection.getStartPosition());
+    const endOffset = editor
+      .getModel()
+      ?.getOffsetAt(selection.getEndPosition());
+    if (startOffset === undefined || endOffset === undefined) return;
+    editor.setValue(
+      `${code.substring(0, startOffset)}${text}${code.substring(endOffset)}`,
+    );
+    editor.setPosition(selection.getStartPosition().delta(0, text.length));
   }
 </script>
 
-<div class="h-full" bind:this={editorContainer}></div>
+<div
+  class="h-full"
+  {@attach (element) => {
+    editor = monaco.editor.create(element, {
+      language: LANG,
+      theme: "vs-dark",
+      minimap: { enabled: false },
+      scrollbar: { vertical: "auto", horizontal: "auto" },
+      automaticLayout: true,
+      lineNumbers: "off",
+      wordWrap: "on",
+      fontSize: 14,
+      padding: { top: 14 },
+    });
+    return () => editor?.dispose();
+  }}
+></div>
