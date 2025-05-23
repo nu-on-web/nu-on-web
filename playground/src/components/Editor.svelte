@@ -4,22 +4,18 @@
   import {
     addDefinitionProvider,
     addCommandsDecoration,
-  } from "../lib/editor-ops/";
+  } from "../lib/editor-ops";
 
   interface Props {
     code?: string;
-    editor?: monaco.editor.IStandaloneCodeEditor;
     disable?: boolean;
     onEnter?: () => void;
   }
-  let {
-    code = $bindable(),
-    editor = $bindable(),
-    disable,
-    onEnter,
-  }: Props = $props();
+
+  let { code = $bindable(), disable, onEnter }: Props = $props();
 
   let editorContainer = $state<HTMLDivElement>();
+  let editor: monaco.editor.IStandaloneCodeEditor | undefined;
 
   $effect(() => {
     if (!editorContainer) return;
@@ -74,6 +70,22 @@
     if (!editor) return;
     editor.addCommand(monaco.KeyCode.Enter, () => onEnter?.());
   });
+
+  export function focus() {
+    editor?.focus();
+  }
+
+  export function insertAtCursor(text: string) {
+    if (!editor) return;
+    const position = editor.getPosition();
+    if (!code || !position) {
+      code = text;
+      return;
+    }
+    const offset = editor.getModel()?.getOffsetAt(position);
+    if (offset === undefined) return;
+    code = `${code.substring(0, offset)}${text}${code.substring(offset)}`;
+  }
 </script>
 
 <div class="h-full" bind:this={editorContainer}></div>
