@@ -5,7 +5,8 @@
     addDefinitionProvider,
     addCommandsDecoration,
   } from "../lib/editor-ops";
-  import { setContext } from "svelte";
+  import type { Attachment } from "svelte/attachments";
+  import { untrack } from "svelte";
 
   interface Props {
     code?: string;
@@ -18,17 +19,6 @@
   let editor: monaco.editor.IStandaloneCodeEditor | undefined;
 
   $effect(() => {
-    if (!editor) return;
-    const definitionProvider = addDefinitionProvider(editor);
-    const commandsDecoration = addCommandsDecoration(editor);
-
-    return () => {
-      definitionProvider.dispose();
-      commandsDecoration?.dispose();
-    };
-  });
-
-  $effect(() => {
     editor?.updateOptions({ readOnly: disable ?? false });
   });
 
@@ -39,19 +29,6 @@
       editor.setValue(code);
       if (position) editor.setPosition(position);
     }
-  });
-
-  $effect(() => {
-    const changeContentListener = editor?.getModel()?.onDidChangeContent(() => {
-      if (!editor) return;
-      code = editor.getValue();
-    });
-    return () => changeContentListener?.dispose();
-  });
-
-  $effect(() => {
-    if (!editor) return;
-    editor.addCommand(monaco.KeyCode.Enter, () => onEnter?.());
   });
 
   export function focus() {
@@ -79,11 +56,8 @@
     );
     editor.setPosition(selection.getStartPosition().delta(0, text.length));
   }
-</script>
 
-<div
-  class="h-full"
-  {@attach (element) => {
+  const editorAttachment: Attachment<HTMLDivElement> = (element) => {
     editor = monaco.editor.create(element, {
       language: LANG,
       theme: "vs-dark",
@@ -94,7 +68,26 @@
       wordWrap: "on",
       fontSize: 14,
       padding: { top: 14 },
+      value: untrack(() => code),
+      readOnly: untrack(() => disable ?? false),
     });
-    return () => editor?.dispose();
-  }}
-></div>
+
+    const definitionProvider = addDefinitionProvider(editor);
+    const commandsDecoration = addCommandsDecoration(editor);
+
+    const changeContentListener = editor.getModel()?.onDidChangeContent(() => {
+      code = editor!.getValue();
+    });
+
+    editor.addCommand(monaco.KeyCode.Enter, () => onEnter?.());
+
+    return () => {
+      changeContentListener?.dispose();
+      definitionProvider.dispose();
+      commandsDecoration?.dispose();
+      editor?.dispose();
+    };
+  };
+</script>
+
+<div class="h-full" {@attach editorAttachment}></div>
