@@ -40,7 +40,8 @@
     const selection = editor.getSelection();
     if (!code || !selection) {
       editor.setValue(text);
-      editor.setPosition({ lineNumber: 1, column: text.length + 1 });
+      const newPos = editor.getModel()?.getPositionAt(text.length);
+      if (newPos) editor.setPosition(newPos);
       return;
     }
 
@@ -54,7 +55,8 @@
     editor.setValue(
       `${code.substring(0, startOffset)}${text}${code.substring(endOffset)}`,
     );
-    editor.setPosition(selection.getStartPosition().delta(0, text.length));
+    const newPos = editor.getModel()?.getPositionAt(endOffset + text.length);
+    if (newPos) editor.setPosition(newPos);
   }
 
   const editorAttachment: Attachment<HTMLDivElement> = (element) => {
