@@ -44,7 +44,7 @@ impl Engine {
         Self { engine_state }
     }
 
-    fn parse<'engine>(&'engine mut self, contents: &str) -> (Arc<Block>, StateWorkingSet<'engine>) {
+    fn parse<'engine>(&'engine self, contents: &str) -> (Arc<Block>, StateWorkingSet<'engine>) {
         let mut working_set = StateWorkingSet::new(&self.engine_state);
         let output = nu_parser::parse(&mut working_set, None, contents.as_bytes(), false);
 
@@ -75,7 +75,7 @@ impl Engine {
         RunCodeResult::Success(value)
     }
 
-    pub fn get_commands_descriptions(&mut self, code: &str) -> Vec<GetCommandDescriptionResult> {
+    pub fn get_commands_descriptions(&self, code: &str) -> Vec<GetCommandDescriptionResult> {
         let (block, _) = self.parse(code);
 
         block.ir_block.as_ref().map_or(vec![], |ir_block| {
@@ -101,7 +101,7 @@ impl Engine {
         })
     }
     pub fn get_pipeline_element_by_position(
-        &mut self,
+        &self,
         code: &str,
         offset: usize,
     ) -> Option<Expression> {
