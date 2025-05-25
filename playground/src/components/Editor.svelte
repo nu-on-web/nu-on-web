@@ -36,27 +36,24 @@
   }
 
   export function insertAtCursor(text: string) {
-    if (!editor) return;
+    const model = editor?.getModel();
+    if (!model || !editor) return;
+
     const selection = editor.getSelection();
     if (!code || !selection) {
       editor.setValue(text);
-      const newPos = editor.getModel()?.getPositionAt(text.length);
-      if (newPos) editor.setPosition(newPos);
+      const newPos = model.getPositionAt(text.length);
+      editor.setPosition(newPos);
       return;
     }
 
-    const startOffset = editor
-      .getModel()
-      ?.getOffsetAt(selection.getStartPosition());
-    const endOffset = editor
-      .getModel()
-      ?.getOffsetAt(selection.getEndPosition());
-    if (startOffset === undefined || endOffset === undefined) return;
+    const startOffset = model.getOffsetAt(selection.getStartPosition());
+    const endOffset = model.getOffsetAt(selection.getEndPosition());
     editor.setValue(
       `${code.substring(0, startOffset)}${text}${code.substring(endOffset)}`,
     );
-    const newPos = editor.getModel()?.getPositionAt(endOffset + text.length);
-    if (newPos) editor.setPosition(newPos);
+    const newPos = model.getPositionAt(startOffset + text.length);
+    editor.setPosition(newPos);
   }
 
   const editorAttachment: Attachment<HTMLDivElement> = (element) => {
