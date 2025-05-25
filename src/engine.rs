@@ -121,6 +121,37 @@ impl Engine {
     pub fn get_next_span_start(&self) -> usize {
         self.engine_state.next_span_start()
     }
+
+    pub fn fetch_completions(&mut self, code: &str, pos: usize) -> (Option<Span>, Vec<String>) {
+        let offset = self.engine_state.next_span_start();
+        let (block, working_set) = self.parse(code);
+
+        let pos_to_search = pos + offset;
+
+        let Some(element_expression) = block.find_map(&working_set, &|expr: &Expression| {
+            find_pipeline_element_by_position(expr, &working_set, pos_to_search)
+        }) else {
+            return (None, vec![]);
+        };
+
+        if let Expr::ExternalCall(expr, _) = &element_expression.expr {
+            let start_offset = element_expression.span.start - offset;
+            let Some(prefix) = code.get(start_offset..pos) else {
+                return (None, vec![]);
+            };
+
+            (
+                Some(expr.span),
+                self.engine_state
+                    .find_commands_by_predicate(|name| name.starts_with(prefix.as_bytes()), true)
+                    .into_iter()
+                    .filter_map(|(_, bytes, _, _)| String::from_utf8(bytes).ok())
+                    .collect(),
+            )
+        } else {
+            (None, vec![])
+        }
+    }
 }
 
 impl Default for Engine {

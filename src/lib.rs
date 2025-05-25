@@ -58,3 +58,12 @@ pub fn get_next_span_start() -> Result<usize, Error> {
     let engine = get_engine().lock().expect("Failed to lock engine");
     Ok(engine.get_next_span_start())
 }
+
+#[wasm_bindgen]
+pub fn fetch_completions(code: &str, pos: usize) -> Result<JsValue, Error> {
+    let mut engine = get_engine().lock().expect("Failed to lock engine");
+
+    let result = engine.fetch_completions(code, pos);
+
+    serde_wasm_bindgen::to_value(&result).map_err(|_| failed_to_serialize_error(&result))
+}
