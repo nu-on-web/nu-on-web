@@ -33,7 +33,7 @@ pub fn run_code(code: &str) -> Result<JsValue, Error> {
 
 #[wasm_bindgen]
 pub fn get_commands_descriptions(code: &str) -> Result<JsValue, Error> {
-    let mut engine = get_engine().lock().expect("Failed to lock engine");
+    let engine = get_engine().lock().expect("Failed to lock engine");
     let commands_description = engine.get_commands_descriptions(code);
     serde_wasm_bindgen::to_value(&commands_description)
         .map_err(|_| failed_to_serialize_error(&commands_description))
@@ -41,7 +41,7 @@ pub fn get_commands_descriptions(code: &str) -> Result<JsValue, Error> {
 
 #[wasm_bindgen]
 pub fn find_pipeline_element_by_position(code: &str, pos: usize) -> Result<JsValue, Error> {
-    let mut engine = get_engine().lock().expect("Failed to lock engine");
+    let engine = get_engine().lock().expect("Failed to lock engine");
     let elm = engine.get_pipeline_element_by_position(code, pos);
     serde_wasm_bindgen::to_value(&elm).map_err(|_| failed_to_serialize_error(&elm))
 }
