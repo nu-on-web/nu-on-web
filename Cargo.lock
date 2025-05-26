@@ -1650,9 +1650,9 @@ dependencies = [
 
 [[package]]
 name = "nu-utils"
-version = "0.104.0"
+version = "0.104.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "327999b774d78b301a6b68c33d312a1a8047c59fb8971b6552ebf823251f1481"
+checksum = "97b2caee79fc55090fb10d35c81f8f52ec6bed96961bde357bf31b23ca378a8e"
 dependencies = [
  "crossterm_winapi",
  "fancy-regex",
