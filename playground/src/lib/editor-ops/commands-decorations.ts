@@ -1,17 +1,20 @@
-import * as monaco from 'monaco-editor'
+import * as monaco from "monaco-editor";
 
-import { getCommandsDescriptions, getNextSpanStart } from '../nushell';
-import { moveSpanByOffset, spanToRange } from '../utils';
+import { getCommandsDescriptions, getNextSpanStart } from "../nushell";
+import { moveSpanByOffset, spanToRange } from "../utils";
 
-export const addCommandsDecoration = (editor: monaco.editor.IStandaloneCodeEditor): monaco.IDisposable | undefined => {
-  let commandsDecoration: monaco.editor.IEditorDecorationsCollection | undefined;
+export const addCommandsDecoration = (
+  editor: monaco.editor.IStandaloneCodeEditor,
+): monaco.IDisposable | undefined => {
+  let commandsDecoration:
+    | monaco.editor.IEditorDecorationsCollection
+    | undefined;
   return editor.getModel()?.onDidChangeContent(() => {
     commandsDecoration?.clear();
-    const code = editor.getValue()
-    const commandsDescriptions = getCommandsDescriptions(code)
+    const code = editor.getValue();
+    const commandsDescriptions = getCommandsDescriptions(code);
     commandsDecoration = editor.createDecorationsCollection(
       commandsDescriptions.map((commandDescription) => {
-
         const alignedSpan = moveSpanByOffset(
           commandDescription.span,
           getNextSpanStart() * -1,
@@ -22,8 +25,8 @@ export const addCommandsDecoration = (editor: monaco.editor.IStandaloneCodeEdito
           options: {
             hoverMessage: { value: commandDescription.description },
           },
-        }
-      })
+        };
+      }),
     );
-  })
-}
+  });
+};

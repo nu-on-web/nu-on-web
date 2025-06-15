@@ -6,55 +6,20 @@
     addCommandsDecoration,
     addAutoCompletions,
   } from "../lib/editor-ops/";
+  import type { Attachment } from "svelte/attachments";
+  import { untrack } from "svelte";
 
   interface Props {
     code?: string;
-    editor?: monaco.editor.IStandaloneCodeEditor;
     disable?: boolean;
     onEnter?: () => void;
   }
-  let {
-    code = $bindable(),
-    editor = $bindable(),
-    disable,
-    onEnter,
-  }: Props = $props();
 
   const IS_AUTOCOMPLETE_OPEN_CTX_KEY = "isAutoCompleteOpen";
 
-  let editorContainer = $state<HTMLDivElement>();
+  let { code = $bindable(), disable, onEnter }: Props = $props();
 
-  $effect(() => {
-    if (!editorContainer) return;
-    editor = monaco.editor.create(editorContainer, {
-      language: LANG,
-      theme: "vs-dark",
-      minimap: { enabled: false },
-      scrollbar: { vertical: "auto", horizontal: "auto" },
-      automaticLayout: true,
-      lineNumbers: "off",
-      wordWrap: "on",
-      tabCompletion: "on",
-      fontSize: 14,
-      padding: { top: 14 },
-    });
-    return () => editor?.dispose();
-  });
-
-  $effect(() => {
-    if (!editor) return;
-    const definitionProvider = addDefinitionProvider(editor);
-
-    const commandsDecoration = addCommandsDecoration(editor);
-
-    const autoCompleter = addAutoCompletions();
-
-    return () => {
-      definitionProvider.dispose();
-      commandsDecoration?.dispose();
-      autoCompleter.dispose();
-    };
-  });
+  let editor: monaco.editor.IStandaloneCodeEditor | undefined;
 
   $effect(() => {
     editor?.updateOptions({ readOnly: disable ?? false });
@@ -69,16 +34,52 @@
     }
   });
 
-  $effect(() => {
-    const changeContentListener = editor?.getModel()?.onDidChangeContent(() => {
-      if (!editor) return;
-      code = editor.getValue();
-    });
-    return () => changeContentListener?.dispose();
-  });
+  export function focus() {
+    editor?.focus();
+  }
 
-  $effect(() => {
-    if (!editor) return;
+  export function insertAtCursor(text: string) {
+    const model = editor?.getModel();
+    if (!model || !editor) return;
+
+    const selection = editor.getSelection();
+    if (!code || !selection) {
+      editor.setValue(text);
+      const newPos = model.getPositionAt(text.length);
+      editor.setPosition(newPos);
+      return;
+    }
+
+    const startOffset = model.getOffsetAt(selection.getStartPosition());
+    const endOffset = model.getOffsetAt(selection.getEndPosition());
+    editor.setValue(
+      `${code.substring(0, startOffset)}${text}${code.substring(endOffset)}`,
+    );
+    const newPos = model.getPositionAt(startOffset + text.length);
+    editor.setPosition(newPos);
+  }
+
+  const editorAttachment: Attachment<HTMLDivElement> = (element) => {
+    editor = monaco.editor.create(element, {
+      language: LANG,
+      theme: "vs-dark",
+      minimap: { enabled: false },
+      scrollbar: { vertical: "auto", horizontal: "auto" },
+      automaticLayout: true,
+      lineNumbers: "off",
+      wordWrap: "on",
+      fontSize: 14,
+      padding: { top: 14 },
+      value: untrack(() => code),
+      readOnly: untrack(() => disable ?? false),
+    });
+
+    const definitionProvider = addDefinitionProvider(editor);
+    const commandsDecoration = addCommandsDecoration(editor);
+
+    const changeContentListener = editor.getModel()?.onDidChangeContent(() => {
+      code = editor!.getValue();
+    });
 
     let isAutoCompleteOpenCtx = editor.createContextKey<boolean>(
       IS_AUTOCOMPLETE_OPEN_CTX_KEY,
@@ -89,14 +90,6 @@
       "editor.contrib.suggestController",
     ) as any;
 
-    editor.addCommand(
-      monaco.KeyCode.Enter,
-      () => {
-        onEnter?.();
-      },
-      `!${IS_AUTOCOMPLETE_OPEN_CTX_KEY}`, // run onEnter only when the suggestion popup is closed
-    );
-
     suggestController?.widget.value.onDidShow(() =>
       isAutoCompleteOpenCtx.set(true),
     );
@@ -104,7 +97,23 @@
     suggestController?.widget.value.onDidHide(() =>
       isAutoCompleteOpenCtx.set(false),
     );
-  });
+
+    editor.addCommand(
+      monaco.KeyCode.Enter,
+      () => onEnter?.(),
+      `!${IS_AUTOCOMPLETE_OPEN_CTX_KEY}`, // run onEnter only when the suggestion popup is closed
+    );
+
+    const autoCompleter = addAutoCompletions();
+
+    return () => {
+      changeContentListener?.dispose();
+      definitionProvider.dispose();
+      commandsDecoration?.dispose();
+      autoCompleter.dispose();
+      editor?.dispose();
+    };
+  };
 </script>
 
-<div class="h-full" bind:this={editorContainer}></div>
+<div class="h-full" {@attach editorAttachment}></div>
