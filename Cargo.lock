@@ -1201,6 +1201,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "lscolors"
+version = "0.20.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "61183da5de8ba09a58e330d55e5ea796539d8443bd00fdeb863eac39724aa4ab"
+dependencies = [
+ "aho-corasick",
+ "nu-ansi-term",
+]
+
+[[package]]
 name = "mach2"
 version = "0.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1366,7 +1376,7 @@ dependencies = [
  "nu-parser",
  "nu-pretty-hex",
  "nu-protocol",
- "nu-utils",
+ "nu-utils 0.104.1",
  "num-traits",
  "rust-embed",
  "serde",
@@ -1384,7 +1394,7 @@ dependencies = [
  "nu-engine",
  "nu-parser",
  "nu-protocol",
- "nu-utils",
+ "nu-utils 0.104.1",
  "shadow-rs",
 ]
 
@@ -1433,7 +1443,7 @@ dependencies = [
  "indicatif",
  "itertools 0.13.0",
  "log",
- "lscolors",
+ "lscolors 0.17.0",
  "md-5",
  "mime",
  "mime_guess",
@@ -1451,7 +1461,7 @@ dependencies = [
  "nu-system",
  "nu-table",
  "nu-term-grid",
- "nu-utils",
+ "nu-utils 0.104.1",
  "num-format",
  "num-traits",
  "nuon",
@@ -1509,7 +1519,7 @@ dependencies = [
  "nu-glob",
  "nu-path",
  "nu-protocol",
- "nu-utils",
+ "nu-utils 0.104.1",
 ]
 
 [[package]]
@@ -1543,7 +1553,7 @@ dependencies = [
  "nu-engine",
  "nu-path",
  "nu-protocol",
- "nu-utils",
+ "nu-utils 0.104.1",
  "serde_json",
 ]
 
@@ -1591,7 +1601,7 @@ dependencies = [
  "nu-glob",
  "nu-path",
  "nu-system",
- "nu-utils",
+ "nu-utils 0.104.1",
  "num-format",
  "serde",
  "serde_json",
@@ -1634,7 +1644,7 @@ dependencies = [
  "nu-color-config",
  "nu-engine",
  "nu-protocol",
- "nu-utils",
+ "nu-utils 0.104.1",
  "tabled",
 ]
 
@@ -1644,20 +1654,39 @@ version = "0.104.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "42aca5245e6d1d25a5ef223f2b4a2d8592d22064b868d822cfe7307de112c735"
 dependencies = [
- "nu-utils",
+ "nu-utils 0.104.1",
  "unicode-width 0.2.0",
 ]
 
 [[package]]
 name = "nu-utils"
-version = "0.104.0"
+version = "0.104.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "327999b774d78b301a6b68c33d312a1a8047c59fb8971b6552ebf823251f1481"
+checksum = "97b2caee79fc55090fb10d35c81f8f52ec6bed96961bde357bf31b23ca378a8e"
 dependencies = [
  "crossterm_winapi",
  "fancy-regex",
  "log",
- "lscolors",
+ "lscolors 0.17.0",
+ "nix",
+ "num-format",
+ "serde",
+ "serde_json",
+ "strip-ansi-escapes",
+ "sys-locale",
+ "unicase",
+]
+
+[[package]]
+name = "nu-utils"
+version = "0.106.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f1799806999aa837718ac3dd1652fb0338f1d4665561db3bb90caa7175aa7493"
+dependencies = [
+ "crossterm_winapi",
+ "fancy-regex",
+ "log",
+ "lscolors 0.20.0",
  "nix",
  "num-format",
  "serde",
@@ -1716,7 +1745,7 @@ dependencies = [
  "nu-engine",
  "nu-parser",
  "nu-protocol",
- "nu-utils",
+ "nu-utils 0.104.1",
 ]
 
 [[package]]
@@ -1731,7 +1760,7 @@ dependencies = [
  "nu-engine",
  "nu-parser",
  "nu-protocol",
- "nu-utils",
+ "nu-utils 0.106.1",
  "serde",
  "serde-wasm-bindgen",
  "serde_json",
