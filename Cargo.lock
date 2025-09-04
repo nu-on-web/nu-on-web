@@ -243,6 +243,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "buf-trait"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "21eaafc770e8c073d6c3facafe7617e774305d4954aa6351b9c452eb37ee17b4"
+dependencies = [
+ "zerocopy",
+]
+
+[[package]]
 name = "bumpalo"
 version = "3.17.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -273,6 +282,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2e93abca9e28e0a1b9877922aacb20576e05d4679ffa78c3d6dc22a26a216659"
 
 [[package]]
+name = "byteyarn"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b93e51d26468a15ea59f8525e0c13dc405db43e644a0b1e6d44346c72cf4cf7b"
+dependencies = [
+ "buf-trait",
+]
+
+[[package]]
 name = "calamine"
 version = "0.27.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -288,6 +306,15 @@ dependencies = [
  "quick-xml",
  "serde",
  "zip",
+]
+
+[[package]]
+name = "castaway"
+version = "0.2.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dec551ab6e7578819132c713a93c022a05d60159dc86e7a7050223577484c55a"
+dependencies = [
+ "rustversion",
 ]
 
 [[package]]
@@ -723,6 +750,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "fancy-regex"
+version = "0.16.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bf04c5ec15464ace8355a7b440a33aece288993475556d461154d7a62ad9947c"
+dependencies = [
+ "bit-set",
+ "regex-automata",
+ "regex-syntax",
+]
+
+[[package]]
 name = "fast-float2"
 version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1106,6 +1144,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bbd2bcb4c963f2ddae06a2efc7e9f3591312473c50c6685e1f298068316e66fe"
 
 [[package]]
+name = "lean_string"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "962df00ba70ac8d5ca5c064e17e5c3d090c087fd8d21aa45096c716b169da514"
+dependencies = [
+ "castaway",
+ "itoa",
+ "ryu",
+ "serde",
+]
+
+[[package]]
 name = "libc"
 version = "0.2.172"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1197,6 +1247,16 @@ version = "0.17.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "53304fff6ab1e597661eee37e42ea8c47a146fca280af902bb76bff8a896e523"
 dependencies = [
+ "nu-ansi-term",
+]
+
+[[package]]
+name = "lscolors"
+version = "0.20.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "61183da5de8ba09a58e330d55e5ea796539d8443bd00fdeb863eac39724aa4ab"
+dependencies = [
+ "aho-corasick",
  "nu-ansi-term",
 ]
 
@@ -1355,7 +1415,7 @@ version = "0.104.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "613a5bc7a75b4e0d35a56400efa3b29a6a0cd3c6f36720904c9fafe3afefd324"
 dependencies = [
- "fancy-regex",
+ "fancy-regex 0.14.0",
  "heck",
  "itertools 0.13.0",
  "mime",
@@ -1366,7 +1426,7 @@ dependencies = [
  "nu-parser",
  "nu-pretty-hex",
  "nu-protocol",
- "nu-utils",
+ "nu-utils 0.104.1",
  "num-traits",
  "rust-embed",
  "serde",
@@ -1384,7 +1444,7 @@ dependencies = [
  "nu-engine",
  "nu-parser",
  "nu-protocol",
- "nu-utils",
+ "nu-utils 0.104.1",
  "shadow-rs",
 ]
 
@@ -1425,7 +1485,7 @@ dependencies = [
  "digest",
  "dtparse",
  "encoding_rs",
- "fancy-regex",
+ "fancy-regex 0.14.0",
  "filesize",
  "filetime",
  "human-date-parser",
@@ -1433,7 +1493,7 @@ dependencies = [
  "indicatif",
  "itertools 0.13.0",
  "log",
- "lscolors",
+ "lscolors 0.17.0",
  "md-5",
  "mime",
  "mime_guess",
@@ -1451,7 +1511,7 @@ dependencies = [
  "nu-system",
  "nu-table",
  "nu-term-grid",
- "nu-utils",
+ "nu-utils 0.104.1",
  "num-format",
  "num-traits",
  "nuon",
@@ -1509,7 +1569,7 @@ dependencies = [
  "nu-glob",
  "nu-path",
  "nu-protocol",
- "nu-utils",
+ "nu-utils 0.104.1",
 ]
 
 [[package]]
@@ -1543,7 +1603,7 @@ dependencies = [
  "nu-engine",
  "nu-path",
  "nu-protocol",
- "nu-utils",
+ "nu-utils 0.104.1",
  "serde_json",
 ]
 
@@ -1579,7 +1639,7 @@ dependencies = [
  "chrono-humanize",
  "dirs",
  "dirs-sys",
- "fancy-regex",
+ "fancy-regex 0.14.0",
  "heck",
  "indexmap",
  "log",
@@ -1591,7 +1651,7 @@ dependencies = [
  "nu-glob",
  "nu-path",
  "nu-system",
- "nu-utils",
+ "nu-utils 0.104.1",
  "num-format",
  "serde",
  "serde_json",
@@ -1629,12 +1689,12 @@ version = "0.104.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2248c1b5c2f5e95eb6be6e02715e3a88673f0781d5bff207f4eed5aea666cf44"
 dependencies = [
- "fancy-regex",
+ "fancy-regex 0.14.0",
  "nu-ansi-term",
  "nu-color-config",
  "nu-engine",
  "nu-protocol",
- "nu-utils",
+ "nu-utils 0.104.1",
  "tabled",
 ]
 
@@ -1644,20 +1704,42 @@ version = "0.104.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "42aca5245e6d1d25a5ef223f2b4a2d8592d22064b868d822cfe7307de112c735"
 dependencies = [
- "nu-utils",
+ "nu-utils 0.104.1",
  "unicode-width 0.2.0",
 ]
 
 [[package]]
 name = "nu-utils"
-version = "0.104.0"
+version = "0.104.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "327999b774d78b301a6b68c33d312a1a8047c59fb8971b6552ebf823251f1481"
+checksum = "97b2caee79fc55090fb10d35c81f8f52ec6bed96961bde357bf31b23ca378a8e"
 dependencies = [
  "crossterm_winapi",
- "fancy-regex",
+ "fancy-regex 0.14.0",
  "log",
- "lscolors",
+ "lscolors 0.17.0",
+ "nix",
+ "num-format",
+ "serde",
+ "serde_json",
+ "strip-ansi-escapes",
+ "sys-locale",
+ "unicase",
+]
+
+[[package]]
+name = "nu-utils"
+version = "0.107.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "27ee1ae2999faaf8577f55a6051ec9b02a8cae5660f323a9d332e8b6734dc24b"
+dependencies = [
+ "byteyarn",
+ "crossterm_winapi",
+ "fancy-regex 0.16.1",
+ "lean_string",
+ "log",
+ "lscolors 0.20.0",
+ "memchr",
  "nix",
  "num-format",
  "serde",
@@ -1716,7 +1798,7 @@ dependencies = [
  "nu-engine",
  "nu-parser",
  "nu-protocol",
- "nu-utils",
+ "nu-utils 0.104.1",
 ]
 
 [[package]]
@@ -1731,7 +1813,7 @@ dependencies = [
  "nu-engine",
  "nu-parser",
  "nu-protocol",
- "nu-utils",
+ "nu-utils 0.107.0",
  "serde",
  "serde-wasm-bindgen",
  "serde_json",
@@ -3465,6 +3547,27 @@ dependencies = [
  "quote",
  "syn 2.0.100",
  "synstructure",
+]
+
+[[package]]
+name = "zerocopy"
+version = "0.7.35"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1b9b4fd18abc82b8136838da5d50bae7bdea537c574d8dc1a34ed098d6c166f0"
+dependencies = [
+ "byteorder",
+ "zerocopy-derive",
+]
+
+[[package]]
+name = "zerocopy-derive"
+version = "0.7.35"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fa4f8080344d4671fb4e831a13ad1e68092748387dfc4f55e356242fae12ce3e"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.100",
 ]
 
 [[package]]
