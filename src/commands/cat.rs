@@ -51,8 +51,8 @@ impl Command for Cat {
 
         Ok(Value::string(
             readfile(&path, options).map_err(|e| ShellError::GenericError {
-                msg: format!("error: {}", e.to_string()),
-                error: format!("error: {}", e.to_string()),
+                msg: e.to_string().into(),
+                error: e.to_string().into(),
                 span: Some(call.head),
                 help: None,
                 inner: Vec::new(),

@@ -40,8 +40,8 @@ impl Command for Ls {
             Err(e) => {
                 return Ok(Value::Error {
                     error: Box::new(ShellError::GenericError {
-                        msg: format!("error: {}", e.to_string()),
-                        error: format!("error: {}", e.to_string()),
+                        msg: e.to_string().into(),
+                        error: e.to_string().into(),
                         span: Some(call.head),
                         help: None,
                         inner: Vec::new(),

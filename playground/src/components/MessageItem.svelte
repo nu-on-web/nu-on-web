@@ -1,15 +1,15 @@
 <script lang="ts">
+  import Convert from "ansi-to-html";
+  import Error from "~icons/si/dangerous-duotone";
+  import sanitizeHtml from "sanitize-html";
   import Highlight from "svelte-highlight";
   import shell from "svelte-highlight/languages/bash";
-  import sanitizeHtml from "sanitize-html";
   import "svelte-highlight/styles/github-dark.css";
   import { Message } from "../lib/types";
-  import Convert from "ansi-to-html";
-  let convert = new Convert();
 
   import dayjs from "dayjs";
-  import relativeTime from "dayjs/plugin/relativeTime";
   import duration from "dayjs/plugin/duration";
+  import relativeTime from "dayjs/plugin/relativeTime";
 
   dayjs.extend(relativeTime);
   dayjs.extend(duration);
@@ -18,6 +18,8 @@
     message: Message;
   }
   let { message }: Props = $props();
+
+  const convert = new Convert();
 
   let currentTime = $state(new Date());
 
@@ -35,19 +37,30 @@
   <div class="chat-header">
     {message.type}
   </div>
-  <div
-    class="chat-bubble bg-slate-950 before:bg-slate-950 max-h-[80vh] overflow-auto"
-  >
-    {#if message.type === "user"}
+  {#if message.type === "user"}
+    <div class="chat-bubble bg-slate-950 before:bg-slate-950 max-h-[80vh]">
       <Highlight language={shell} code={message.value} class="shadow-xl" />
-    {:else if "success" in message.value}
+    </div>
+  {:else if "success" in message.value}
+    <div class="chat-bubble bg-slate-950 before:bg-slate-950 max-h-[80vh]">
       <div class="response-content">
         {@html convert.toHtml(sanitizeHtml(message.value.success.String.val))}
       </div>
-    {:else}
+    </div>
+  {:else if "error" in message.value}
+    <div
+      class="chat-bubble max-h-[80vh] bg-error text-error-content flex items-center gap-2"
+    >
+      <Error class="h-5 w-5" />
+      <div class="response-content">
+        {message.value.error.msg}
+      </div>
+    </div>
+  {:else}
+    <div class="chat-bubble bg-slate-950 before:bg-slate-950 max-h-[80vh]">
       {JSON.stringify(message.value)}
-    {/if}
-  </div>
+    </div>
+  {/if}
   <div class="chat-footer text-xs opacity-50">
     {time}
   </div>

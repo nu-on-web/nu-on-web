@@ -36,8 +36,8 @@ impl Command for Rm {
     ) -> Result<PipelineData, ShellError> {
         let path: String = call.req(engine_state, stack, 0)?;
         unlink(&path).map_err(|e| ShellError::GenericError {
-            msg: format!("error: {}", e.to_string()),
-            error: format!("error: {}", e.to_string()),
+            msg: e.to_string().into(),
+            error: e.to_string().into(),
             span: Some(call.head),
             help: None,
             inner: Vec::new(),
