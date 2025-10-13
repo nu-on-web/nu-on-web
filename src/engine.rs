@@ -29,6 +29,7 @@ pub struct GetCommandDescriptionResult {
 
 pub struct Engine {
     engine_state: EngineState,
+    stack: Stack,
 }
 
 impl Engine {
@@ -44,7 +45,12 @@ impl Engine {
             .merge_delta(working_set.delta)
             .expect("Failed to merge delta");
 
-        Self { engine_state }
+        let stack = Stack::default();
+
+        Self {
+            engine_state,
+            stack,
+        }
     }
 
     fn parse<'engine>(&'engine self, contents: &str) -> (Arc<Block>, StateWorkingSet<'engine>) {
@@ -71,7 +77,7 @@ impl Engine {
 
         match eval_block::<WithoutDebug>(
             &self.engine_state,
-            &mut Stack::default(),
+            &mut self.stack,
             &block,
             PipelineData::Empty,
         ) {
