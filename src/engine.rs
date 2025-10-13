@@ -82,8 +82,8 @@ impl Engine {
             PipelineData::Empty,
         )
         .and_then(|v| v.into_value(Span::unknown()))
-        .map(|v| RunCodeResult::Success(v))
-        .unwrap_or_else(|e| RunCodeResult::Error(e))
+        .map(RunCodeResult::Success)
+        .unwrap_or_else(RunCodeResult::Error)
     }
 
     pub fn get_commands_descriptions(&self, code: &str) -> Vec<GetCommandDescriptionResult> {
