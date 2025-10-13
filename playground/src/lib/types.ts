@@ -9,11 +9,19 @@ export type Span = z.infer<typeof Span>;
 const CompileError = z.object({
   RunExternalNotFound: z.object({ span: Span }),
 });
+const ShellError = z.object({
+  msg: z.string(),
+});
 
 export const Result = z
   .object({
     success: z.object({ String: z.object({ val: z.string() }) }),
   })
+  .or(
+    z.object({
+      error: ShellError,
+    }),
+  )
   .or(
     z.object({
       compileErrors: z.array(CompileError),
@@ -57,13 +65,13 @@ export type Message = z.infer<typeof Message>;
 export const Expression = z.object({
   Call: z.object({
     head: Span,
-    decl_id: z.number()
-  })
-})
-export type Expression = z.infer<typeof Expression>
+    decl_id: z.number(),
+  }),
+});
+export type Expression = z.infer<typeof Expression>;
 
 export const PipelineElement = z.object({
   expr: Expression,
-  span: Span
-})
-export type PipelineElement = z.infer<typeof PipelineElement>
+  span: Span,
+});
+export type PipelineElement = z.infer<typeof PipelineElement>;

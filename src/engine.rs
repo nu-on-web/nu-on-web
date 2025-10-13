@@ -1,12 +1,14 @@
-use nu_cmd_lang::{create_default_context, eval_block};
+use nu_cmd_lang::create_default_context;
+use nu_engine::eval_block;
 use nu_protocol::{
     ast::{Block, Expr, Expression, FindMapResult, Traverse},
-    engine::{Command, EngineState, StateWorkingSet},
+    debugger::WithoutDebug,
+    engine::{Command, EngineState, Stack, StateWorkingSet},
     ir::Instruction,
-    CompileError, DeclId, ParseError, PipelineData, Span, Value,
+    CompileError, DeclId, ParseError, PipelineData, ShellError, Span, Value,
 };
 use serde::Serialize;
-use std::{path::Path, sync::Arc};
+use std::sync::Arc;
 
 use crate::commands;
 
@@ -14,6 +16,7 @@ use crate::commands;
 #[serde(rename_all(serialize = "camelCase", deserialize = "camelCase"))]
 pub enum RunCodeResult {
     Success(Value),
+    Error(ShellError),
     ParseErrors(Vec<ParseError>),
     CompileErrors(Vec<CompileError>),
 }
@@ -66,13 +69,16 @@ impl Engine {
             .merge_delta(delta)
             .expect("engine state merge failed");
 
-        let value = eval_block(
-            block,
-            PipelineData::empty(),
-            Path::new("/tmp"),
+        match eval_block::<WithoutDebug>(
             &self.engine_state,
-        );
-        RunCodeResult::Success(value)
+            &mut Stack::default(),
+            &block,
+            PipelineData::Empty,
+        ) {
+            Ok(PipelineData::Value(value, _)) => RunCodeResult::Success(value),
+            Err(e) => RunCodeResult::Error(e),
+            v => panic!("Unexpected value: {:?}", v),
+        }
     }
 
     pub fn get_commands_descriptions(&self, code: &str) -> Vec<GetCommandDescriptionResult> {

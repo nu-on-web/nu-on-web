@@ -35,15 +35,24 @@ impl Command for Ls {
         let path = path.unwrap_or_else(|| ".".to_string());
         let span = input.span().unwrap_or(call.head);
         let metadata = input.metadata();
+        let items = match readdir(&path) {
+            Ok(v) => v,
+            Err(e) => {
+                return Ok(Value::Error {
+                    error: Box::new(ShellError::GenericError {
+                        msg: format!("error: {}", e.to_string()),
+                        error: format!("error: {}", e.to_string()),
+                        span: Some(call.head),
+                        help: None,
+                        inner: Vec::new(),
+                    }),
+                    internal_span: call.head,
+                }
+                .into_pipeline_data_with_metadata(metadata));
+            }
+        };
         Ok(Value::list(
-            readdir(&path)
-                .map_err(|e| ShellError::GenericError {
-                    msg: format!("error: {}", e.to_string()),
-                    error: format!("error: {}", e.to_string()),
-                    span: Some(call.head),
-                    help: None,
-                    inner: Vec::new(),
-                })?
+            items
                 .into_iter()
                 .map(|f| path::Path::new(&path).join(f))
                 .map(|path| {
