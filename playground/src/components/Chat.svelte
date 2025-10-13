@@ -22,7 +22,7 @@
 
 <div
   bind:this={container}
-  class="{className} flex flex-col overflow-y-scroll gap-2"
+  class="{className} flex flex-col overflow-y-auto p-1 gap-2"
 >
   {#each messages as message}
     <MessageItem {message} />
