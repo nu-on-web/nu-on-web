@@ -80,11 +80,11 @@ impl Engine {
             &mut self.stack,
             &block,
             PipelineData::Empty,
-        ) {
-            Ok(PipelineData::Empty) => RunCodeResult::Success(Value::nothing(Span::unknown())),
-            Ok(PipelineData::Value(value, _)) => RunCodeResult::Success(value),
+        )
+        .and_then(|v| v.into_value(Span::unknown()))
+        {
+            Ok(v) => RunCodeResult::Success(v),
             Err(e) => RunCodeResult::Error(e),
-            v => panic!("Unexpected value: {:?}", v),
         }
     }
 
