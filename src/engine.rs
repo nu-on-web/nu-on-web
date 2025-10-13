@@ -75,17 +75,15 @@ impl Engine {
             .merge_delta(delta)
             .expect("engine state merge failed");
 
-        match eval_block::<WithoutDebug>(
+        eval_block::<WithoutDebug>(
             &self.engine_state,
             &mut self.stack,
             &block,
             PipelineData::Empty,
         )
         .and_then(|v| v.into_value(Span::unknown()))
-        {
-            Ok(v) => RunCodeResult::Success(v),
-            Err(e) => RunCodeResult::Error(e),
-        }
+        .map(|v| RunCodeResult::Success(v))
+        .unwrap_or_else(|e| RunCodeResult::Error(e))
     }
 
     pub fn get_commands_descriptions(&self, code: &str) -> Vec<GetCommandDescriptionResult> {
