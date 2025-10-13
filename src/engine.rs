@@ -81,6 +81,7 @@ impl Engine {
             &block,
             PipelineData::Empty,
         ) {
+            Ok(PipelineData::Empty) => RunCodeResult::Success(Value::nothing(Span::unknown())),
             Ok(PipelineData::Value(value, _)) => RunCodeResult::Success(value),
             Err(e) => RunCodeResult::Error(e),
             v => panic!("Unexpected value: {:?}", v),
