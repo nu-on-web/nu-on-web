@@ -25,12 +25,6 @@ nu-cmd-extra = "0.107.0"
 serde-wasm-bindgen = "0.6.5"
 js-sys = "0.3.81"
 
-[patch.crates-io]
-zip = { git = "https://github.com/zip-rs/zip2", rev = "77cde6a" }
-
-[patch.'https://github.com/zip-rs/zip2']
-zip = { git = "https://github.com//zip-rs/zip2", rev = "77cde6a" }
-
 [dev-dependencies]
 wasm-bindgen-test = "0.3.54"
 

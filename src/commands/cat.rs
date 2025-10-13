@@ -1,8 +1,8 @@
 use js_sys::{Object, Reflect};
 use nu_engine::CallExt;
 use nu_protocol::{
-    engine::Command, IntoPipelineData, PipelineData, ShellError, Signature, SyntaxShape, Type,
-    Value,
+    engine::Command, Example, IntoPipelineData, PipelineData, ShellError, Signature, SyntaxShape,
+    Type, Value,
 };
 use wasm_bindgen::JsValue;
 
@@ -60,5 +60,20 @@ impl Command for Cat {
             span,
         )
         .into_pipeline_data_with_metadata(metadata))
+    }
+
+    fn examples(&self) -> Vec<Example<'static>> {
+        vec![
+            Example {
+                description: "Display the contents of a file",
+                example: "cat myfile.txt",
+                result: None,
+            },
+            Example {
+                description: "Display the contents of a file in a subdirectory",
+                example: "cat subdir/myfile.txt",
+                result: None,
+            },
+        ]
     }
 }

@@ -1,5 +1,7 @@
 use nu_engine::CallExt;
-use nu_protocol::{engine::Command, PipelineData, ShellError, Signature, SyntaxShape, Type};
+use nu_protocol::{
+    engine::Command, Example, PipelineData, ShellError, Signature, SyntaxShape, Type,
+};
 
 use crate::zenfs::unlink;
 
@@ -42,5 +44,20 @@ impl Command for Rm {
         })?;
 
         Ok(PipelineData::empty())
+    }
+
+    fn examples(&self) -> Vec<Example<'static>> {
+        vec![
+            Example {
+                description: "Remove a file",
+                example: "rm myfile.txt",
+                result: None,
+            },
+            Example {
+                description: "Remove a file in a subdirectory",
+                example: "rm subdir/myfile.txt",
+                result: None,
+            },
+        ]
     }
 }
