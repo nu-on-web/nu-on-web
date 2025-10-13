@@ -1,6 +1,6 @@
+use js_sys::Error;
 use std::any::type_name_of_val;
 use wasm_bindgen::prelude::*;
-use js_sys::Error;
 
 #[wasm_bindgen]
 extern "C" {

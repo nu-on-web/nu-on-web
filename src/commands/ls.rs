@@ -86,7 +86,7 @@ impl Command for Ls {
         .into_pipeline_data_with_metadata(metadata))
     }
 
-    fn examples(&self) -> Vec<Example> {
+    fn examples(&self) -> Vec<Example<'static>> {
         vec![
             Example {
                 description: "List all files in the current directory",
