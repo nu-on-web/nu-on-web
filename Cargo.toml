@@ -11,19 +11,19 @@ crate-type = ["cdylib", "rlib"]
 default = ["console_error_panic_hook"]
 
 [dependencies]
-wasm-bindgen = "0.2.84"
+wasm-bindgen = "0.2.104"
 console_error_panic_hook = { version = "0.1.7", optional = true }
-nu-cmd-lang = { version = "0.104.0", features = [], default-features = false }
-nu-utils = { version = "0.104.0", features = [], default-features = false }
-nu-protocol = { version = "0.104.0", default-features = false }
-serde = { version = "1.0.218", features = ["derive"] }
-serde_json = "1.0.139"
-nu-engine = { version = "0.104.0", default-features = false }
-nu-command = { version = "0.104.0", default-features = false, features = [] }
-nu-parser = { version = "0.104.0", default-features = false }
-nu-cmd-extra = "0.104.0"
+nu-cmd-lang = { version = "0.107.0", features = [], default-features = false }
+nu-utils = { version = "0.107.0", features = [], default-features = false }
+nu-protocol = { version = "0.107.0", default-features = false }
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.145"
+nu-engine = { version = "0.107.0", default-features = false }
+nu-command = { version = "0.107.0", default-features = false, features = [] }
+nu-parser = { version = "0.107.0", default-features = false }
+nu-cmd-extra = "0.107.0"
 serde-wasm-bindgen = "0.6.5"
-js-sys = "0.3.77"
+js-sys = "0.3.81"
 
 [patch.crates-io]
 zip = { git = "https://github.com/zip-rs/zip2", rev = "77cde6a" }
@@ -32,7 +32,7 @@ zip = { git = "https://github.com/zip-rs/zip2", rev = "77cde6a" }
 zip = { git = "https://github.com//zip-rs/zip2", rev = "77cde6a" }
 
 [dev-dependencies]
-wasm-bindgen-test = "0.3.34"
+wasm-bindgen-test = "0.3.54"
 
 [profile.release]
 # Tell `rustc` to optimize for small code size.
