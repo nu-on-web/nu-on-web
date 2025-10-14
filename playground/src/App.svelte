@@ -4,7 +4,7 @@
   import { configureSingle } from "@zenfs/core";
   import { mkdir, writeFile, exists } from "@zenfs/core/promises";
   import { WebStorage } from "@zenfs/dom";
-  import { init } from "./lib/nushell";
+  import init from "./wasm/nushell_wasm";
 
   let setupPromise = Promise.all([
     (async () => {

@@ -1,6 +1,9 @@
 import * as monaco from "monaco-editor";
 
-import { getCommandsDescriptions, getNextSpanStart } from "../nushell";
+import {
+  getCommandsDescriptions,
+  getNextSpanStart,
+} from "../../wasm/nushell_wasm";
 import { moveSpanByOffset, spanToRange } from "../utils";
 
 export const addCommandsDecoration = (

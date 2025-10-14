@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Message } from "../lib/types";
+  import type { Message } from "../lib/types";
   import MessageItem from "./MessageItem.svelte";
 
   interface Props {

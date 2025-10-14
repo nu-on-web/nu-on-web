@@ -5,7 +5,7 @@
   import Highlight from "svelte-highlight";
   import shell from "svelte-highlight/languages/bash";
   import "svelte-highlight/styles/github-dark.css";
-  import { Message } from "../lib/types";
+  import type { Message } from "../lib/types";
 
   import dayjs from "dayjs";
   import duration from "dayjs/plugin/duration";
@@ -41,10 +41,10 @@
     <div class="chat-bubble bg-slate-950 before:bg-slate-950 max-h-[80vh]">
       <Highlight language={shell} code={message.value} class="shadow-xl" />
     </div>
-  {:else if "success" in message.value}
+  {:else if message.value.type === "success" && message.value.vtype === "string"}
     <div class="chat-bubble bg-slate-950 before:bg-slate-950 max-h-[80vh]">
       <div class="response-content">
-        {@html convert.toHtml(sanitizeHtml(message.value.success.String.val))}
+        {@html convert.toHtml(sanitizeHtml(message.value.val))}
       </div>
     </div>
   {:else if "error" in message.value}

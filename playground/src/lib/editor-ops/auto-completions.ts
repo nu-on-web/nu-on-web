@@ -1,13 +1,13 @@
 import * as monaco from "monaco-editor";
 import { LANG } from "../constants";
-import { fetchCompletions, getNextSpanStart } from "../nushell";
+import { fetchCompletions, getNextSpanStart } from "../../wasm/nushell_wasm";
 
 export const addAutoCompletions = (): monaco.IDisposable => {
   const autoCompleter = monaco.languages.registerCompletionItemProvider(LANG, {
     provideCompletionItems(model, position) {
       const offset = model.getOffsetAt(position);
       const code = model.getValue();
-      const [span, suggestedCommands] = fetchCompletions(
+      const { span, completions: suggestedCommands } = fetchCompletions(
         code,
         offset - (code.length === offset ? 1 : 0),
       );

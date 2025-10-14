@@ -3,8 +3,8 @@ import { LANG } from "../constants";
 import {
   getDeclarationNameFromId,
   getNextSpanStart,
-  getPipelineElementByOffset,
-} from "../nushell";
+  findPipelineElementByOffset,
+} from "../../wasm/nushell_wasm";
 import { moveSpanByOffset, spanToRange } from "../utils";
 
 export const addDefinitionProvider = (
@@ -27,7 +27,7 @@ export const addDefinitionProvider = (
 
     // find pipeline element
     const offset = model.getOffsetAt(range.getStartPosition());
-    const pipelineElement = getPipelineElementByOffset(
+    const pipelineElement = findPipelineElementByOffset(
       model.getValue(),
       offset,
     );
@@ -35,7 +35,7 @@ export const addDefinitionProvider = (
     if (!pipelineElement) return;
 
     // get declaration name of pipeline element
-    const name = getDeclarationNameFromId(pipelineElement.expr.Call.decl_id);
+    const name = getDeclarationNameFromId(pipelineElement.expr.declId);
 
     if (!name) return;
 
@@ -58,13 +58,13 @@ export const addDefinitionProvider = (
       // find pipeline element
       const offset = model.getOffsetAt(position);
       const code = model.getValue();
-      const pipelineElement = getPipelineElementByOffset(code, offset);
+      const pipelineElement = findPipelineElementByOffset(code, offset);
 
       if (!pipelineElement) return;
 
       // We need to align the span since the engine state accumulate spans and each time the next spans starts from the end of the previous spans.
       // without the alignment this feature will only work when Ctrl+clicking on elements in the first command.
-      const pipelineElementHeadSpan = pipelineElement.expr.Call.head;
+      const pipelineElementHeadSpan = pipelineElement.expr.head;
       const pipelineElementHeadalignedSpan = moveSpanByOffset(
         pipelineElementHeadSpan,
         getNextSpanStart() * -1,
