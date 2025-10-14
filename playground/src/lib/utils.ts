@@ -1,5 +1,5 @@
 import * as Monaco from "monaco-editor";
-import type { Span } from "./types";
+import type { Span } from "../wasm/nushell_wasm";
 import lineColumn from "line-column";
 
 export function spanToRange(content: string, span: Span): Monaco.Range {

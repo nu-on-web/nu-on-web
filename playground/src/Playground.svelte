@@ -1,7 +1,7 @@
 <script lang="ts">
   import Prompt from "./components/Prompt.svelte";
   import Chat from "./components/Chat.svelte";
-  import { runCode } from "./lib/nushell";
+  import { runCode } from "./wasm/nushell_wasm";
   import type { Message } from "./lib/types";
   import Split from "split-grid";
 

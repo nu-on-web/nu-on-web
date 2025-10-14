@@ -4,28 +4,14 @@ use nu_protocol::{
     ast::{Block, Expr, Expression, FindMapResult, Traverse},
     debugger::WithoutDebug,
     engine::{Command, EngineState, Stack, StateWorkingSet},
-    ir::Instruction,
-    CompileError, DeclId, ParseError, PipelineData, ShellError, Span, Value,
+    ir::Instruction, DeclId, PipelineData, Span,
 };
-use serde::Serialize;
 use std::sync::Arc;
 
-use crate::commands;
-
-#[derive(Serialize, Debug)]
-#[serde(rename_all(serialize = "camelCase", deserialize = "camelCase"))]
-pub enum RunCodeResult {
-    Success(Value),
-    Error(ShellError),
-    ParseErrors(Vec<ParseError>),
-    CompileErrors(Vec<CompileError>),
-}
-
-#[derive(Serialize)]
-pub struct GetCommandDescriptionResult {
-    span: Span,
-    description: String,
-}
+use crate::{
+    commands,
+    types::{GetCommandDescriptionResult, RunCodeResult},
+};
 
 pub struct Engine {
     engine_state: EngineState,
@@ -64,10 +50,22 @@ impl Engine {
         let (block, working_set) = self.parse(code);
 
         if !working_set.parse_errors.is_empty() {
-            return RunCodeResult::ParseErrors(working_set.parse_errors);
+            return RunCodeResult::ParseErrors(
+                working_set
+                    .parse_errors
+                    .into_iter()
+                    .map(|e| e.into())
+                    .collect(),
+            );
         }
         if !working_set.compile_errors.is_empty() {
-            return RunCodeResult::CompileErrors(working_set.compile_errors);
+            return RunCodeResult::CompileErrors(
+                working_set
+                    .compile_errors
+                    .into_iter()
+                    .map(|e| e.into())
+                    .collect(),
+            );
         }
         let delta = working_set.render();
 
@@ -82,8 +80,8 @@ impl Engine {
             PipelineData::Empty,
         )
         .and_then(|v| v.into_value(Span::unknown()))
-        .map(RunCodeResult::Success)
-        .unwrap_or_else(RunCodeResult::Error)
+        .map(|v| RunCodeResult::Success(v.into()))
+        .unwrap_or_else(|e| RunCodeResult::Error(e.into()))
     }
 
     pub fn get_commands_descriptions(&self, code: &str) -> Vec<GetCommandDescriptionResult> {
@@ -94,12 +92,12 @@ impl Engine {
                 .instructions
                 .iter()
                 .zip(&ir_block.spans)
-                .filter_map(|(instruction, span)| match instruction {
+                .filter_map(|(instruction, &span)| match instruction {
                     Instruction::Call {
                         decl_id,
                         src_dst: _,
                     } => Some(GetCommandDescriptionResult {
-                        span: *span,
+                        span: span.into(),
                         description: self
                             .engine_state
                             .get_decl(*decl_id)
@@ -111,11 +109,7 @@ impl Engine {
                 .collect()
         })
     }
-    pub fn get_pipeline_element_by_position(
-        &self,
-        code: &str,
-        offset: usize,
-    ) -> Option<Expression> {
+    pub fn get_pipeline_element_by_offset(&self, code: &str, offset: usize) -> Option<Expression> {
         let next_span_start = self.engine_state.next_span_start();
         let (block, working_set) = self.parse(code);
         block

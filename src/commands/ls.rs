@@ -70,11 +70,11 @@ impl Command for Ls {
                         let stats = stat(&f);
                         match stats {
                             Ok(stats) => {
-                                record.insert("size", Value::filesize(stats.size, span));
+                                record.insert("size", Value::filesize(stats.size(), span));
                                 record.insert(
                                     "type",
                                     Value::string(
-                                        if stats.is_directory { "dir" } else { "file" },
+                                        if stats.is_directory() { "dir" } else { "file" },
                                         span,
                                     ),
                                 );
