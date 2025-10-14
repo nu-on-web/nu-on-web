@@ -4,16 +4,13 @@ use nu_protocol::{
     ast::{Block, Expr, Expression, FindMapResult, Traverse},
     debugger::WithoutDebug,
     engine::{Command, EngineState, Stack, StateWorkingSet},
-    ir::Instruction,
-    CompileError, DeclId, ParseError, PipelineData, ShellError, Span, Value,
+    ir::Instruction, DeclId, PipelineData, Span,
 };
-use serde::Serialize;
 use std::sync::Arc;
-use tsify::Tsify;
 
 use crate::{
     commands,
-    types::{self, GetCommandDescriptionResult, RunCodeResult},
+    types::{GetCommandDescriptionResult, RunCodeResult},
 };
 
 pub struct Engine {

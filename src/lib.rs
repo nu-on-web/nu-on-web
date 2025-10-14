@@ -5,19 +5,16 @@ mod engine;
 mod types;
 mod zenfs;
 
-use std::{
-    string,
-    sync::{Mutex, OnceLock},
-};
+use std::sync::{Mutex, OnceLock};
 
 use engine::Engine;
 use js_sys::Error;
 use nu_protocol::DeclId;
-use utils::{failed_to_serialize_error, set_panic_hook};
-use wasm_bindgen::{prelude::*, JsValue};
+use utils::set_panic_hook;
+use wasm_bindgen::prelude::*;
 
 use crate::types::{
-    Expression, FetchCompletionResult, GetCommandDescriptionResult, RunCodeResult, Span,
+    Expression, FetchCompletionResult, GetCommandDescriptionResult, RunCodeResult,
 };
 
 static ENGINE: OnceLock<Mutex<Engine>> = OnceLock::new();
