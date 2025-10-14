@@ -1,9 +1,15 @@
-import * as monaco from 'monaco-editor';
-import { LANG } from '../constants';
-import { getDeclarationNameFromId, getNextSpanStart, getPipelineElementByOffset } from '../nushell';
-import { moveSpanByOffset, spanToRange } from '../utils';
+import * as monaco from "monaco-editor";
+import { LANG } from "../constants";
+import {
+  getDeclarationNameFromId,
+  getNextSpanStart,
+  getPipelineElementByOffset,
+} from "../nushell";
+import { moveSpanByOffset, spanToRange } from "../utils";
 
-export const addDefinitionProvider = (editor: monaco.editor.IStandaloneCodeEditor): monaco.IDisposable => {
+export const addDefinitionProvider = (
+  editor: monaco.editor.IStandaloneCodeEditor,
+): monaco.IDisposable => {
   const fakeUri = monaco.Uri.parse("inmemory://fake");
   const fakeModel = monaco.editor.createModel("", LANG, fakeUri);
   // copied from https://stackoverflow.com/questions/65499301/how-to-override-editor-services
@@ -28,14 +34,15 @@ export const addDefinitionProvider = (editor: monaco.editor.IStandaloneCodeEdito
 
     if (!pipelineElement) return;
 
-
     // get declaration name of pipeline element
     const name = getDeclarationNameFromId(pipelineElement.expr.Call.decl_id);
 
     if (!name) return;
 
     // open declaration docs
-    const nushellDocsBaseUrl = import.meta.env.VITE_NUSHELL_DOCS_BASE_URL ?? 'https://www.nushell.sh/commands/docs';
+    const nushellDocsBaseUrl =
+      import.meta.env.VITE_NUSHELL_DOCS_BASE_URL ??
+      "https://www.nushell.sh/commands/docs";
     const nameInDocs = name.replaceAll(" ", "_");
     const newTab = window.open(
       `${nushellDocsBaseUrl}/${nameInDocs}.html`,
@@ -46,50 +53,50 @@ export const addDefinitionProvider = (editor: monaco.editor.IStandaloneCodeEdito
     newTab?.focus();
   };
 
-  const defintionProvider = monaco.languages.registerDefinitionProvider(
-    LANG,
-    {
-      provideDefinition(model, position) {
-        // find pipeline element
-        const offset = model.getOffsetAt(position);
-        const code = model.getValue()
-        const pipelineElement = getPipelineElementByOffset(code, offset);
+  const defintionProvider = monaco.languages.registerDefinitionProvider(LANG, {
+    provideDefinition(model, position) {
+      // find pipeline element
+      const offset = model.getOffsetAt(position);
+      const code = model.getValue();
+      const pipelineElement = getPipelineElementByOffset(code, offset);
 
-        if (!pipelineElement) return;
+      if (!pipelineElement) return;
 
-        // We need to align the span since the engine state accumulate spans and each time the next spans starts from the end of the previous spans.
-        // without the alignment this feature will only work when Ctrl+clicking on elements in the first command.
-        const pipelineElementHeadSpan = pipelineElement.expr.Call.head;
-        const pipelineElementHeadalignedSpan = moveSpanByOffset(
-          pipelineElementHeadSpan,
-          getNextSpanStart() * -1,
-        );
+      // We need to align the span since the engine state accumulate spans and each time the next spans starts from the end of the previous spans.
+      // without the alignment this feature will only work when Ctrl+clicking on elements in the first command.
+      const pipelineElementHeadSpan = pipelineElement.expr.Call.head;
+      const pipelineElementHeadalignedSpan = moveSpanByOffset(
+        pipelineElementHeadSpan,
+        getNextSpanStart() * -1,
+      );
 
-        const pipelineElementHeadalignedRange = spanToRange(code, pipelineElementHeadalignedSpan);
-        if (
-          // The nushell function returns the entire call expression also if an argument was clicked.
-          // so we check that the clicked position is the head of the call expression (the actual command)
-          !pipelineElementHeadalignedRange.containsPosition(position)
-        ) {
-          return null;
-        }
+      const pipelineElementHeadalignedRange = spanToRange(
+        code,
+        pipelineElementHeadalignedSpan,
+      );
+      if (
+        // The nushell function returns the entire call expression also if an argument was clicked.
+        // so we check that the clicked position is the head of the call expression (the actual command)
+        !pipelineElementHeadalignedRange.containsPosition(position)
+      ) {
+        return null;
+      }
 
-        return [
-          {
-            uri: fakeUri,
-            // pass the range in the modal for the `openCodeEditor` method monkey-patch
-            // to get later then open in nushell docs.
-            range: pipelineElementHeadalignedRange,
-          },
-        ];
-      },
+      return [
+        {
+          uri: fakeUri,
+          // pass the range in the modal for the `openCodeEditor` method monkey-patch
+          // to get later then open in nushell docs.
+          range: pipelineElementHeadalignedRange,
+        },
+      ];
     },
-  )
+  });
 
   return {
     dispose() {
       fakeModel.dispose();
       defintionProvider.dispose();
-    }
-  }
-}
+    },
+  };
+};
