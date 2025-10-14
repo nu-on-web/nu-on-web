@@ -2,6 +2,7 @@ import pluginSvelte from "eslint-plugin-svelte";
 import parserSvelte from "svelte-eslint-parser";
 import parserTs from "@typescript-eslint/parser";
 import pluginTs from "@typescript-eslint/eslint-plugin";
+import eslintConfigPrettier from "eslint-config-prettier/flat";
 
 export default [
   // Ignore build artifacts
@@ -44,5 +45,6 @@ export default [
       ...pluginTs.configs.recommended.rules,
     },
   },
+  // Disable ESLint rules that conflict with Prettier
+  eslintConfigPrettier,
 ];
-

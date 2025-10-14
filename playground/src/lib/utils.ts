@@ -15,7 +15,6 @@ export function spanToRange(content: string, span: Span): Monaco.Range {
 export function moveSpanByOffset(span: Span, offset: number): Span {
   return {
     start: span.start + offset,
-    end: span.end + offset
-  }
+    end: span.end + offset,
+  };
 }
-

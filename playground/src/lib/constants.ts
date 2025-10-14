@@ -1,2 +1,1 @@
-export const LANG = 'shell'
-
+export const LANG = "shell";

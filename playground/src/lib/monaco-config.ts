@@ -6,4 +6,3 @@ loader.config({
     vs: "/nu-on-web/assets/vs",
   },
 });
-

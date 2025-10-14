@@ -16,9 +16,7 @@
     "isolatedModules": true,
     "moduleDetection": "force",
     "strict": true,
-    "types": [
-      "src/vite-env.d.ts"
-    ],
+    "types": ["src/vite-env.d.ts"]
   },
   "include": [
     "src/**/*.ts",
