@@ -58,8 +58,7 @@
     "svelte-file-dropzone": "^2.0.9",
     "svelte-highlight": "^7.8.3",
     "tailwindcss": "^4.1.7",
-    "unplugin-icons": "^22.1.0",
-    "zod": "^3.25.23"
+    "unplugin-icons": "^22.1.0"
   },
   "browserslist": [
     "defaults",
