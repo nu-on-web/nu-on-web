@@ -88,7 +88,7 @@ impl Engine {
                 v.into()
             }
         })
-        .map(|v| RunCodeResult::Success(v))
+        .map(RunCodeResult::Success)
         .unwrap_or_else(|e| RunCodeResult::Error(e.into()))
     }
 
