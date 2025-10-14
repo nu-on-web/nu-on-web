@@ -4,7 +4,7 @@ use serde::Serialize;
 use tsify::Tsify;
 
 #[derive(Serialize, Debug, Tsify)]
-#[serde(rename_all = "camelCase", tag = "vtype")]
+#[serde(rename_all = "camelCase", tag = "valueType")]
 pub enum Value {
     Bool {
         val: bool,
@@ -118,7 +118,7 @@ impl From<nu_protocol::Value> for Value {
 }
 
 #[derive(Serialize, Debug, Tsify)]
-#[serde(rename_all = "camelCase", tag = "type")]
+#[serde(rename_all = "camelCase", tag = "errorType")]
 pub enum ShellError {
     GenericError {
         error: String,
