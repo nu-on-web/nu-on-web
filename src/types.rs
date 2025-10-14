@@ -57,6 +57,10 @@ pub enum Value {
         #[serde(rename = "span")]
         internal_span: Span,
     },
+    Unsupported {
+        #[serde(rename = "span")]
+        internal_span: Span,
+    },
 }
 
 impl From<nu_protocol::Value> for Value {
@@ -112,7 +116,9 @@ impl From<nu_protocol::Value> for Value {
             nu_protocol::Value::Nothing { internal_span } => Value::Nothing {
                 internal_span: internal_span.into(),
             },
-            v => panic!("Unsupported value type: {:?}", v),
+            v => Value::Unsupported {
+                internal_span: v.span().into(),
+            },
         }
     }
 }
