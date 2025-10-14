@@ -138,6 +138,9 @@ pub enum ShellError {
         help: Option<String>,
         inner: Vec<ShellError>,
     },
+    Other {
+        msg: String,
+    },
 }
 
 impl From<nu_protocol::ShellError> for ShellError {
@@ -156,7 +159,10 @@ impl From<nu_protocol::ShellError> for ShellError {
                 help,
                 inner: inner.into_iter().map(|e| e.into()).collect(),
             },
-            v => panic!("Unsupported shell error type: {:?}", v),
+            v => {
+                warn(format!("Unsupported error type: {v:?}").as_str());
+                ShellError::Other { msg: v.to_string() }
+            }
         }
     }
 }
