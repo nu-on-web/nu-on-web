@@ -22,9 +22,10 @@ extern "C" {
 }
 
 impl Stats {
-    pub fn size(&self) -> u32 {
+    pub fn size(&self) -> i64 {
         let v = Reflect::get(self.as_ref(), &JsValue::from_str("size"))
             .expect("Failed to get 'size' property from Stats object");
-        v.as_f64().expect("Stats 'size' property should be a numeric value") as u32
+        v.as_f64()
+            .expect("Stats 'size' property should be a numeric value") as i64
     }
 }

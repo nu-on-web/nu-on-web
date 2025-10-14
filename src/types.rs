@@ -258,6 +258,7 @@ impl From<nu_protocol::ast::Expr> for Expr {
     fn from(expr: nu_protocol::ast::Expr) -> Self {
         match expr {
             nu_protocol::ast::Expr::Call(call) => Expr::Call((*call).into()),
+            // TODO: Add support for ExternalCall, Var, etc. when needed
             v => panic!("Unsupported expression type: {:?}", v),
         }
     }
