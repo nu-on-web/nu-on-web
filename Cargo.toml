@@ -29,7 +29,7 @@ nu-parser = { version = "0.107.0", default-features = false }
 nu-cmd-extra = "0.107.0"
 serde-wasm-bindgen = "0.6.5"
 js-sys = "0.3.81"
-tsify = { version = "0.5.5", features = ["js"] }
+tsify = { version = "0.5.5", features = ["js", "wasm-bindgen"], default-features = false }
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3.54"
