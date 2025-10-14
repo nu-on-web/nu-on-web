@@ -53,7 +53,7 @@ export const addDefinitionProvider = (
     newTab?.focus();
   };
 
-  const defintionProvider = monaco.languages.registerDefinitionProvider(LANG, {
+  const definitionProvider = monaco.languages.registerDefinitionProvider(LANG, {
     provideDefinition(model, position) {
       // find pipeline element
       const offset = model.getOffsetAt(position);
@@ -96,7 +96,7 @@ export const addDefinitionProvider = (
   return {
     dispose() {
       fakeModel.dispose();
-      defintionProvider.dispose();
+      definitionProvider.dispose();
     },
   };
 };
