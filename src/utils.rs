@@ -4,6 +4,7 @@ use wasm_bindgen::prelude::*;
 extern "C" {
     #[wasm_bindgen(js_namespace = console)]
     pub fn log(s: &str);
+    pub fn warn(s: &str);
 }
 
 pub fn set_panic_hook() {

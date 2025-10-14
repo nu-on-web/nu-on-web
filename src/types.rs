@@ -3,6 +3,8 @@ use std::panic;
 use serde::Serialize;
 use tsify::Tsify;
 
+use crate::utils::warn;
+
 #[derive(Serialize, Debug, Tsify)]
 #[serde(rename_all = "camelCase", tag = "valueType")]
 pub enum Value {
@@ -116,9 +118,12 @@ impl From<nu_protocol::Value> for Value {
             nu_protocol::Value::Nothing { internal_span } => Value::Nothing {
                 internal_span: internal_span.into(),
             },
-            v => Value::Unsupported {
-                internal_span: v.span().into(),
-            },
+            v => {
+                warn(format!("Unsupported value type: {:?}", v).as_str());
+                Value::Unsupported {
+                    internal_span: v.span().into(),
+                }
+            }
         }
     }
 }
