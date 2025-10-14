@@ -13,9 +13,7 @@ use nu_protocol::DeclId;
 use utils::set_panic_hook;
 use wasm_bindgen::prelude::*;
 
-use crate::types::{
-    Expression, FetchCompletionResult, GetCommandDescriptionResult, RunCodeResult,
-};
+use crate::types::{Expression, FetchCompletionResult, GetCommandDescriptionResult, RunCodeResult};
 
 static ENGINE: OnceLock<Mutex<Engine>> = OnceLock::new();
 
@@ -29,9 +27,9 @@ pub fn init() {
 }
 
 #[wasm_bindgen(js_name = "runCode")]
-pub fn run_code(code: &str) -> RunCodeResult {
+pub fn run_code(code: &str, return_html: Option<bool>) -> RunCodeResult {
     let mut engine = get_engine().lock().expect("Failed to lock engine");
-    engine.run_code(code)
+    engine.run_code(code, return_html.unwrap_or(true))
 }
 
 #[wasm_bindgen(js_name = "getCommandsDescriptions")]

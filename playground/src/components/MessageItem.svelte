@@ -41,7 +41,7 @@
     <div class="chat-bubble bg-slate-950 before:bg-slate-950 max-h-[80vh]">
       <Highlight language={shell} code={message.value} class="shadow-xl" />
     </div>
-  {:else if message.value.type === "success" && message.value.valueType === "string"}
+  {:else if message.value.type === "success" && message.value.valueType === "html"}
     <div class="chat-bubble bg-slate-950 before:bg-slate-950 max-h-[80vh]">
       <div class="response-content">
         {@html convert.toHtml(sanitizeHtml(message.value.val))}

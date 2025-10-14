@@ -63,6 +63,15 @@ pub enum Value {
         #[serde(rename = "span")]
         internal_span: Span,
     },
+    Html {
+        val: String,
+    },
+}
+
+impl Value {
+    pub fn html(val: String) -> Self {
+        Value::Html { val }
+    }
 }
 
 impl From<nu_protocol::Value> for Value {

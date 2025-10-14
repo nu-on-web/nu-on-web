@@ -9,8 +9,7 @@
 
   function onSend(code: string) {
     messages = [...messages, { type: "user", value: code, time: new Date() }];
-    const codeToRun = `${code} | to html -d --partial`;
-    const result = runCode(codeToRun);
+    const result = runCode(code);
     messages = [
       ...messages,
       { type: "nushell", value: result, time: new Date() },

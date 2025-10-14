@@ -4,7 +4,8 @@ use nu_protocol::{
     ast::{Block, Expr, Expression, FindMapResult, Traverse},
     debugger::WithoutDebug,
     engine::{Command, EngineState, Stack, StateWorkingSet},
-    ir::Instruction, DeclId, PipelineData, Span,
+    ir::Instruction,
+    DeclId, PipelineData, Span, Value,
 };
 use std::sync::Arc;
 
@@ -46,7 +47,7 @@ impl Engine {
         (output, working_set)
     }
 
-    pub fn run_code(&mut self, code: &str) -> RunCodeResult {
+    pub fn run_code(&mut self, code: &str, return_html: bool) -> RunCodeResult {
         let (block, working_set) = self.parse(code);
 
         if !working_set.parse_errors.is_empty() {
@@ -80,8 +81,40 @@ impl Engine {
             PipelineData::Empty,
         )
         .and_then(|v| v.into_value(Span::unknown()))
-        .map(|v| RunCodeResult::Success(v.into()))
+        .map(|v| -> crate::types::Value {
+            if return_html {
+                crate::types::Value::html(self.to_html(v))
+            } else {
+                v.into()
+            }
+        })
+        .map(|v| RunCodeResult::Success(v))
         .unwrap_or_else(|e| RunCodeResult::Error(e.into()))
+    }
+
+    fn to_html(&mut self, value: Value) -> String {
+        let (block, working_set) = self.parse("to html -d --partial");
+        assert!(working_set.parse_errors.is_empty(), "parse");
+        assert!(
+            working_set.compile_errors.is_empty(),
+            "Compilation errors occurred"
+        );
+        let delta = working_set.render();
+        self.engine_state
+            .merge_delta(delta)
+            .expect("engine state merge failed");
+        let Value::String { val, .. } = eval_block::<WithoutDebug>(
+            &self.engine_state,
+            &mut self.stack,
+            &block,
+            PipelineData::value(value, None),
+        )
+        .expect("msg")
+        .into_value(Span::unknown())
+        .expect("work") else {
+            panic!("Unexpected value type");
+        };
+        val
     }
 
     pub fn get_commands_descriptions(&self, code: &str) -> Vec<GetCommandDescriptionResult> {
