@@ -18,10 +18,3 @@ pub fn set_panic_hook() {
     #[cfg(feature = "console_error_panic_hook")]
     console_error_panic_hook::set_once();
 }
-
-pub fn failed_to_serialize_error<T>(val: &T) -> Error
-where
-    T: ?Sized,
-{
-    Error::new(&format!("Failed to serialize {}", type_name_of_val(val)))
-}
