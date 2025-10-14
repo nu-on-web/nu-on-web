@@ -1,5 +1,3 @@
-use js_sys::Error;
-use std::any::type_name_of_val;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
