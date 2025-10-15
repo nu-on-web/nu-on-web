@@ -49,7 +49,7 @@
         {:else if message.value.valueType === "string" || message.value.valueType === "bool" || message.value.valueType === "float" || message.value.valueType === "int"}
           {message.value.val}
         {:else if message.value.valueType === "nothing"}
-          got nothing
+          <i class="text-gray-400">got nothing</i>
         {:else}
           {JSON.stringify(message.value)}
         {/if}
