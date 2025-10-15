@@ -90,29 +90,39 @@ impl Engine {
     }
 
     fn value_to_html(&mut self, value: Value) -> String {
-        let (block, working_set) = self.parse("to html -d --partial");
+        const HTML_COMMAND: &str = "to html --dark --partial";
+        let (block, working_set) = self.parse(HTML_COMMAND);
         assert!(
             working_set.parse_errors.is_empty(),
-            "Failed to parse 'to html -d --partial' command"
+            "Failed to parse '{}' command",
+            HTML_COMMAND
         );
         assert!(
             working_set.compile_errors.is_empty(),
-            "Failed to compile 'to html -d --partial' command"
+            "Failed to compile '{}' command",
+            HTML_COMMAND
         );
         let delta = working_set.render();
-        self.engine_state
-            .merge_delta(delta)
-            .expect("Failed to merge engine state delta for 'to html' command");
+        self.engine_state.merge_delta(delta).expect(
+            format!(
+                "Failed to merge engine state delta for '{}' command",
+                HTML_COMMAND
+            )
+            .as_str(),
+        );
         let Value::String { val, .. } = eval_block::<WithoutDebug>(
             &self.engine_state,
             &mut self.stack,
             &block,
             PipelineData::value(value, None),
         )
-        .expect("Failed to execute 'to html' command")
+        .expect(format!("Failed to execute '{}' command", HTML_COMMAND).as_str())
         .into_value(Span::unknown())
         .expect("Failed to convert pipeline data to value") else {
-            panic!("Expected string output from 'to html' command, got different value type");
+            panic!(
+                "Expected string output from '{}' command, got different value type",
+                HTML_COMMAND
+            );
         };
         val
     }
