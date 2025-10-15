@@ -41,10 +41,18 @@
     <div class="chat-bubble bg-slate-950 before:bg-slate-950 max-h-[80vh]">
       <Highlight language={shell} code={message.value} class="shadow-xl" />
     </div>
-  {:else if message.value.type === "success" && message.value.valueType === "html"}
+  {:else if message.value.type === "success"}
     <div class="chat-bubble bg-slate-950 before:bg-slate-950 max-h-[80vh]">
       <div class="response-content">
-        {@html convert.toHtml(sanitizeHtml(message.value.val))}
+        {#if message.value.valueType === "html"}
+          {@html convert.toHtml(sanitizeHtml(message.value.val))}
+        {:else if message.value.valueType === "string" || message.value.valueType === "bool" || message.value.valueType === "float" || message.value.valueType === "int"}
+          {message.value.val}
+        {:else if message.value.valueType === "nothing"}
+          got nothing
+        {:else}
+          {JSON.stringify(message.value)}
+        {/if}
       </div>
     </div>
   {:else if message.value.type === "error"}

@@ -27,9 +27,9 @@ pub fn init() {
 }
 
 #[wasm_bindgen(js_name = "runCode")]
-pub fn run_code(code: &str, return_html: Option<bool>) -> RunCodeResult {
+pub fn run_code(code: &str) -> RunCodeResult {
     let mut engine = get_engine().lock().expect("Failed to lock engine");
-    engine.run_code(code, return_html.unwrap_or(true))
+    engine.run_code(code)
 }
 
 #[wasm_bindgen(js_name = "getCommandsDescriptions")]

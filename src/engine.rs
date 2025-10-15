@@ -7,7 +7,7 @@ use nu_protocol::{
     ir::Instruction,
     DeclId, PipelineData, Span, Value,
 };
-use std::sync::Arc;
+use std::{convert::TryInto, sync::Arc};
 
 use crate::{
     commands,
@@ -47,7 +47,7 @@ impl Engine {
         (output, working_set)
     }
 
-    pub fn run_code(&mut self, code: &str, return_html: bool) -> RunCodeResult {
+    pub fn run_code(&mut self, code: &str) -> RunCodeResult {
         let (block, working_set) = self.parse(code);
 
         if !working_set.parse_errors.is_empty() {
@@ -82,37 +82,37 @@ impl Engine {
         )
         .and_then(|v| v.into_value(Span::unknown()))
         .map(|v| -> crate::types::Value {
-            if return_html {
-                crate::types::Value::html(self.to_html(v))
-            } else {
-                v.into()
-            }
+            v.try_into()
+                .unwrap_or_else(|v| crate::types::Value::html(self.value_to_html(v)))
         })
         .map(RunCodeResult::Success)
         .unwrap_or_else(|e| RunCodeResult::Error(e.into()))
     }
 
-    fn to_html(&mut self, value: Value) -> String {
+    fn value_to_html(&mut self, value: Value) -> String {
         let (block, working_set) = self.parse("to html -d --partial");
-        assert!(working_set.parse_errors.is_empty(), "parse");
+        assert!(
+            working_set.parse_errors.is_empty(),
+            "Failed to parse 'to html -d --partial' command"
+        );
         assert!(
             working_set.compile_errors.is_empty(),
-            "Compilation errors occurred"
+            "Failed to compile 'to html -d --partial' command"
         );
         let delta = working_set.render();
         self.engine_state
             .merge_delta(delta)
-            .expect("engine state merge failed");
+            .expect("Failed to merge engine state delta for 'to html' command");
         let Value::String { val, .. } = eval_block::<WithoutDebug>(
             &self.engine_state,
             &mut self.stack,
             &block,
             PipelineData::value(value, None),
         )
-        .expect("msg")
+        .expect("Failed to execute 'to html' command")
         .into_value(Span::unknown())
-        .expect("work") else {
-            panic!("Unexpected value type");
+        .expect("Failed to convert pipeline data to value") else {
+            panic!("Expected string output from 'to html' command, got different value type");
         };
         val
     }
