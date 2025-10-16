@@ -13,7 +13,7 @@ default = ["console_error_panic_hook"]
 [dependencies]
 wasm-bindgen = "0.2.104"
 console_error_panic_hook = { version = "0.1.7", optional = true }
-nu-cmd-lang = { version = "0.107.0", features = [], default-features = false }
+nu-cmd-lang = { version = "0.108.0", features = [], default-features = false }
 nu-utils = { version = "0.107.0", features = [], default-features = false }
 nu-protocol = { version = "0.107.0", default-features = false }
 serde = { version = "1.0.228", features = ["derive"] }
