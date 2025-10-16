@@ -26,7 +26,7 @@ nu-command = { version = "0.107.0", default-features = false, features = [
 uuid = { version = "1.18.1", features = ["js"] }
 getrandom = { version = "0.3", features = ["wasm_js"] }
 nu-parser = { version = "0.107.0", default-features = false }
-nu-cmd-extra = "0.107.0"
+nu-cmd-extra = "0.108.0"
 serde-wasm-bindgen = "0.6.5"
 js-sys = "0.3.81"
 tsify = { version = "0.5.5", features = ["js", "wasm-bindgen"], default-features = false }
