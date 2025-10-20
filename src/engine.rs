@@ -4,9 +4,10 @@ use nu_protocol::{
     ast::{Block, Expr, Expression, FindMapResult, Traverse},
     debugger::WithoutDebug,
     engine::{Command, EngineState, Stack, StateWorkingSet},
-    ir::Instruction, DeclId, PipelineData, Span,
+    ir::Instruction,
+    DeclId, PipelineData, Span, Value,
 };
-use std::sync::Arc;
+use std::{convert::TryInto, sync::Arc};
 
 use crate::{
     commands,
@@ -50,22 +51,22 @@ impl Engine {
         let (block, working_set) = self.parse(code);
 
         if !working_set.parse_errors.is_empty() {
-            return RunCodeResult::ParseErrors(
-                working_set
+            return RunCodeResult::ParseErrors {
+                values: working_set
                     .parse_errors
                     .into_iter()
                     .map(|e| e.into())
                     .collect(),
-            );
+            };
         }
         if !working_set.compile_errors.is_empty() {
-            return RunCodeResult::CompileErrors(
-                working_set
+            return RunCodeResult::CompileErrors {
+                values: working_set
                     .compile_errors
                     .into_iter()
                     .map(|e| e.into())
                     .collect(),
-            );
+            };
         }
         let delta = working_set.render();
 
@@ -80,8 +81,45 @@ impl Engine {
             PipelineData::Empty,
         )
         .and_then(|v| v.into_value(Span::unknown()))
-        .map(|v| RunCodeResult::Success(v.into()))
+        .map(|v| -> crate::types::Value {
+            v.try_into()
+                .unwrap_or_else(|v| crate::types::Value::html(self.value_to_html(v)))
+        })
+        .map(RunCodeResult::Success)
         .unwrap_or_else(|e| RunCodeResult::Error(e.into()))
+    }
+
+    fn value_to_html(&mut self, value: Value) -> String {
+        const HTML_COMMAND: &str = "to html --dark --partial";
+        let (block, working_set) = self.parse(HTML_COMMAND);
+        assert!(
+            working_set.parse_errors.is_empty(),
+            "Failed to parse '{}' command",
+            HTML_COMMAND
+        );
+        assert!(
+            working_set.compile_errors.is_empty(),
+            "Failed to compile '{}' command",
+            HTML_COMMAND
+        );
+        let delta = working_set.render();
+        self.engine_state.merge_delta(delta).unwrap_or_else(|_| panic!("Failed to merge engine state delta for '{}' command",
+                HTML_COMMAND));
+        let Value::String { val, .. } = eval_block::<WithoutDebug>(
+            &self.engine_state,
+            &mut self.stack,
+            &block,
+            PipelineData::value(value, None),
+        )
+        .unwrap_or_else(|_| panic!("Failed to execute '{}' command", HTML_COMMAND))
+        .into_value(Span::unknown())
+        .expect("Failed to convert pipeline data to value") else {
+            panic!(
+                "Expected string output from '{}' command, got different value type",
+                HTML_COMMAND
+            );
+        };
+        val
     }
 
     pub fn get_commands_descriptions(&self, code: &str) -> Vec<GetCommandDescriptionResult> {

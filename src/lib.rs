@@ -13,9 +13,7 @@ use nu_protocol::DeclId;
 use utils::set_panic_hook;
 use wasm_bindgen::prelude::*;
 
-use crate::types::{
-    Expression, FetchCompletionResult, GetCommandDescriptionResult, RunCodeResult,
-};
+use crate::types::{Expression, FetchCompletionResult, GetCommandDescriptionResult, RunCodeResult};
 
 static ENGINE: OnceLock<Mutex<Engine>> = OnceLock::new();
 

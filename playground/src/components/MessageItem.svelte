@@ -6,6 +6,7 @@
   import shell from "svelte-highlight/languages/bash";
   import "svelte-highlight/styles/github-dark.css";
   import type { Message } from "../lib/types";
+  import * as R from "remeda";
 
   import dayjs from "dayjs";
   import duration from "dayjs/plugin/duration";
@@ -19,7 +20,7 @@
   }
   let { message }: Props = $props();
 
-  const convert = new Convert();
+  const convert = new Convert({ escapeXML: true });
 
   let currentTime = $state(new Date());
 
@@ -41,19 +42,31 @@
     <div class="chat-bubble bg-slate-950 before:bg-slate-950 max-h-[80vh]">
       <Highlight language={shell} code={message.value} class="shadow-xl" />
     </div>
-  {:else if message.value.type === "success" && message.value.valueType === "string"}
+  {:else if message.value.type === "success" && message.value.valueType !== "error"}
     <div class="chat-bubble bg-slate-950 before:bg-slate-950 max-h-[80vh]">
       <div class="response-content">
-        {@html convert.toHtml(sanitizeHtml(message.value.val))}
+        {#if message.value.valueType === "html"}
+          {@html sanitizeHtml(message.value.val)}
+        {:else if message.value.valueType === "string"}
+          {@html convert.toHtml(message.value.val)}
+        {:else if message.value.valueType === "nothing"}
+          <i class="text-gray-400">Got Nothing</i>
+        {:else if R.isIncludedIn( message.value.valueType, ["bool", "float", "int"] as const, )}
+          {message.value.val}
+        {:else}
+          {JSON.stringify(message.value)}
+        {/if}
       </div>
     </div>
-  {:else if message.value.type === "error"}
+  {:else if message.value.type === "error" || message.value.type === "success"}
     <div
       class="chat-bubble max-h-[80vh] bg-error text-error-content flex items-center gap-2"
     >
       <Error class="h-5 w-5" />
       <div class="response-content">
-        {message.value.msg}
+        {message.value.type === "error"
+          ? message.value.msg
+          : message.value.error.msg}
       </div>
     </div>
   {:else}

@@ -1,4 +1,4 @@
-use std::panic;
+use std::{convert::TryFrom, panic};
 
 use serde::Serialize;
 use tsify::Tsify;
@@ -28,46 +28,30 @@ pub enum Value {
         #[serde(rename = "span")]
         internal_span: Span,
     },
-    Glob {
-        val: String,
-        no_expand: bool,
-        #[serde(rename = "span")]
-        internal_span: Span,
-    },
-    Duration {
-        /// The duration in nanoseconds.
-        val: i64,
-        #[serde(rename = "span")]
-        internal_span: Span,
-    },
-    List {
-        vals: Vec<Value>,
-        #[serde(rename = "span")]
-        internal_span: Span,
-    },
-    Error {
-        error: Box<ShellError>,
-        #[serde(rename = "span")]
-        internal_span: Span,
-    },
-    Binary {
-        val: Vec<u8>,
-        #[serde(rename = "span")]
-        internal_span: Span,
-    },
     Nothing {
         #[serde(rename = "span")]
         internal_span: Span,
     },
-    Unsupported {
+    Error {
+        error: ShellError,
         #[serde(rename = "span")]
         internal_span: Span,
     },
+    Html {
+        val: String,
+    },
 }
 
-impl From<nu_protocol::Value> for Value {
-    fn from(value: nu_protocol::Value) -> Self {
-        match value {
+impl Value {
+    pub fn html(val: String) -> Self {
+        Value::Html { val }
+    }
+}
+
+impl TryFrom<nu_protocol::Value> for Value {
+    type Error = nu_protocol::Value;
+    fn try_from(value: nu_protocol::Value) -> Result<Self, nu_protocol::Value> {
+        Ok(match value {
             nu_protocol::Value::Bool { val, internal_span } => Value::Bool {
                 val,
                 internal_span: internal_span.into(),
@@ -84,47 +68,21 @@ impl From<nu_protocol::Value> for Value {
                 val,
                 internal_span: internal_span.into(),
             },
-            nu_protocol::Value::Glob {
-                val,
-                no_expand,
-                internal_span,
-            } => Value::Glob {
-                val,
-                no_expand,
-                internal_span: internal_span.into(),
-            },
-            nu_protocol::Value::Duration { val, internal_span } => Value::Duration {
-                val,
-                internal_span: internal_span.into(),
-            },
-            nu_protocol::Value::List {
-                vals,
-                internal_span,
-            } => Value::List {
-                vals: vals.into_iter().map(Value::from).collect(),
+            nu_protocol::Value::Nothing { internal_span } => Value::Nothing {
                 internal_span: internal_span.into(),
             },
             nu_protocol::Value::Error {
                 error,
                 internal_span,
             } => Value::Error {
-                error: Box::new((*error).into()),
+                error: (*error).into(),
                 internal_span: internal_span.into(),
             },
-            nu_protocol::Value::Binary { val, internal_span } => Value::Binary {
-                val,
-                internal_span: internal_span.into(),
-            },
-            nu_protocol::Value::Nothing { internal_span } => Value::Nothing {
-                internal_span: internal_span.into(),
-            },
+
             v => {
-                warn(format!("Unsupported value type: {:?}", v).as_str());
-                Value::Unsupported {
-                    internal_span: v.span().into(),
-                }
+                return Err(v);
             }
-        }
+        })
     }
 }
 
@@ -173,8 +131,8 @@ impl From<nu_protocol::ShellError> for ShellError {
 pub enum RunCodeResult {
     Success(Value),
     Error(ShellError),
-    ParseErrors(Vec<ParseError>),
-    CompileErrors(Vec<CompileError>),
+    ParseErrors { values: Vec<ParseError> },
+    CompileErrors { values: Vec<CompileError> },
 }
 
 #[derive(Serialize, Debug, Tsify)]
@@ -197,17 +155,28 @@ impl From<nu_protocol::ParseError> for ParseError {
 #[serde(rename_all = "camelCase")]
 pub struct CompileError {
     message: String,
+    span: Span,
 }
 
 impl From<nu_protocol::CompileError> for CompileError {
     fn from(error: nu_protocol::CompileError) -> Self {
-        CompileError {
-            message: error.to_string(),
+        match error {
+            nu_protocol::CompileError::RunExternalNotFound { span } => CompileError {
+                message: "External command not found".to_string(),
+                span: span.into(),
+            },
+            e => {
+                warn(format!("Unknown compile error: {:?}", e).as_str());
+                CompileError {
+                    message: e.to_string(),
+                    span: Span::default(),
+                }
+            }
         }
     }
 }
 
-#[derive(Serialize, Debug, Tsify)]
+#[derive(Serialize, Debug, Tsify, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Span {
     pub start: usize,
