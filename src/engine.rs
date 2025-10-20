@@ -51,22 +51,22 @@ impl Engine {
         let (block, working_set) = self.parse(code);
 
         if !working_set.parse_errors.is_empty() {
-            return RunCodeResult::ParseErrors(
-                working_set
+            return RunCodeResult::ParseErrors {
+                values: working_set
                     .parse_errors
                     .into_iter()
                     .map(|e| e.into())
                     .collect(),
-            );
+            };
         }
         if !working_set.compile_errors.is_empty() {
-            return RunCodeResult::CompileErrors(
-                working_set
+            return RunCodeResult::CompileErrors {
+                values: working_set
                     .compile_errors
                     .into_iter()
                     .map(|e| e.into())
                     .collect(),
-            );
+            };
         }
         let delta = working_set.render();
 
@@ -103,20 +103,15 @@ impl Engine {
             HTML_COMMAND
         );
         let delta = working_set.render();
-        self.engine_state.merge_delta(delta).expect(
-            format!(
-                "Failed to merge engine state delta for '{}' command",
-                HTML_COMMAND
-            )
-            .as_str(),
-        );
+        self.engine_state.merge_delta(delta).unwrap_or_else(|_| panic!("Failed to merge engine state delta for '{}' command",
+                HTML_COMMAND));
         let Value::String { val, .. } = eval_block::<WithoutDebug>(
             &self.engine_state,
             &mut self.stack,
             &block,
             PipelineData::value(value, None),
         )
-        .expect(format!("Failed to execute '{}' command", HTML_COMMAND).as_str())
+        .unwrap_or_else(|_| panic!("Failed to execute '{}' command", HTML_COMMAND))
         .into_value(Span::unknown())
         .expect("Failed to convert pipeline data to value") else {
             panic!(

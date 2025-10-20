@@ -53,6 +53,7 @@
     "line-column": "^1.0.2",
     "lodash-es": "^4.17.21",
     "monaco-editor": "^0.52.2",
+    "remeda": "^2.32.0",
     "sanitize-html": "^2.17.0",
     "split-grid": "^1.0.11",
     "svelte-file-dropzone": "^2.0.9",

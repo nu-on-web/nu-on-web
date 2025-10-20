@@ -32,6 +32,11 @@ pub enum Value {
         #[serde(rename = "span")]
         internal_span: Span,
     },
+    Error {
+        error: ShellError,
+        #[serde(rename = "span")]
+        internal_span: Span,
+    },
     Html {
         val: String,
     },
@@ -66,6 +71,14 @@ impl TryFrom<nu_protocol::Value> for Value {
             nu_protocol::Value::Nothing { internal_span } => Value::Nothing {
                 internal_span: internal_span.into(),
             },
+            nu_protocol::Value::Error {
+                error,
+                internal_span,
+            } => Value::Error {
+                error: (*error).into(),
+                internal_span: internal_span.into(),
+            },
+
             v => {
                 return Err(v);
             }
@@ -118,8 +131,8 @@ impl From<nu_protocol::ShellError> for ShellError {
 pub enum RunCodeResult {
     Success(Value),
     Error(ShellError),
-    ParseErrors(Vec<ParseError>),
-    CompileErrors(Vec<CompileError>),
+    ParseErrors { values: Vec<ParseError> },
+    CompileErrors { values: Vec<CompileError> },
 }
 
 #[derive(Serialize, Debug, Tsify)]
@@ -142,17 +155,28 @@ impl From<nu_protocol::ParseError> for ParseError {
 #[serde(rename_all = "camelCase")]
 pub struct CompileError {
     message: String,
+    span: Span,
 }
 
 impl From<nu_protocol::CompileError> for CompileError {
     fn from(error: nu_protocol::CompileError) -> Self {
-        CompileError {
-            message: error.to_string(),
+        match error {
+            nu_protocol::CompileError::RunExternalNotFound { span } => CompileError {
+                message: "External command not found".to_string(),
+                span: span.into(),
+            },
+            e => {
+                warn(format!("Unknown compile error: {:?}", e).as_str());
+                CompileError {
+                    message: e.to_string(),
+                    span: Span::default(),
+                }
+            }
         }
     }
 }
 
-#[derive(Serialize, Debug, Tsify)]
+#[derive(Serialize, Debug, Tsify, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Span {
     pub start: usize,
