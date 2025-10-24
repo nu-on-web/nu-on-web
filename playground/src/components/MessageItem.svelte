@@ -11,6 +11,7 @@
   import dayjs from "dayjs";
   import duration from "dayjs/plugin/duration";
   import relativeTime from "dayjs/plugin/relativeTime";
+  import Replay from "./Replay.svelte";
 
   dayjs.extend(relativeTime);
   dayjs.extend(duration);
@@ -40,7 +41,10 @@
   </div>
   {#if message.type === "user"}
     <div class="chat-bubble bg-slate-950 before:bg-slate-950 max-h-[80vh]">
-      <Highlight language={shell} code={message.value} class="shadow-xl" />
+      <div class="flex">
+        <Replay message={message.value} />
+        <Highlight language={shell} code={message.value} class="shadow-xl" />
+      </div>
     </div>
   {:else if message.value.type === "success" && message.value.valueType !== "error"}
     <div class="chat-bubble bg-slate-950 before:bg-slate-950 max-h-[80vh]">

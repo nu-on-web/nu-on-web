@@ -8,6 +8,8 @@
   } from "../lib/editor-ops/";
   import type { Attachment } from "svelte/attachments";
   import { untrack } from "svelte";
+  import { history } from "../lib/stores/code";
+  import { code as codeGlobal } from "../lib/stores/code";
 
   interface Props {
     code?: string;
@@ -103,6 +105,31 @@
       () => onEnter?.(),
       `!${IS_AUTOCOMPLETE_OPEN_CTX_KEY}`, // run onEnter only when the suggestion popup is closed
     );
+
+    editor.onKeyDown((e) => {
+      if (!editor) return;
+
+      if (e.keyCode === monaco.KeyCode.UpArrow) {
+        console.log($history);
+        const position = editor.getPosition();
+        // At the top of the document
+        if (position && position.lineNumber === 1) {
+          e.preventDefault();
+          $codeGlobal =
+            $history.up(editor.getValue().trim()) ?? editor.getValue().trim();
+        }
+      }
+
+      if (e.keyCode === monaco.KeyCode.DownArrow) {
+        const position = editor.getPosition();
+        const model = editor.getModel();
+        // At the bottom of the document
+        if (position && model && position.lineNumber === model.getLineCount()) {
+          e.preventDefault();
+          $codeGlobal = $history.down() ?? editor.getValue().trim();
+        }
+      }
+    });
 
     const autoCompleter = addAutoCompletions();
 
