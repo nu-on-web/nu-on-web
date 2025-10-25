@@ -4,12 +4,14 @@
   import { runCode } from "./wasm/nushell_wasm";
   import type { Message } from "./lib/types";
   import Split from "split-grid";
+  import { history } from "./lib/stores/code";
 
   let messages = $state<Message[]>([]);
 
   function onSend(code: string) {
     messages = [...messages, { type: "user", value: code, time: new Date() }];
     const result = runCode(code);
+    $history.add(code);
     messages = [
       ...messages,
       { type: "nushell", value: result, time: new Date() },

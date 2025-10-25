@@ -1,9 +1,9 @@
 <script lang="ts">
-  import * as monaco from "monaco-editor";
   import Editor from "./Editor.svelte";
   import FilesBar from "./FilesBar.svelte";
   import Run from "~icons/si/terminal-duotone";
   import { isEmpty } from "lodash-es";
+  import { code } from "../lib/stores/code";
 
   interface Props {
     onSend: (code: string) => void;
@@ -12,17 +12,16 @@
 
   const { onSend, disable }: Props = $props();
 
-  let code = $state("");
   let editor: Editor;
 
   function sendCode() {
     if (disable) return;
-    onSend(code);
+    onSend($code);
   }
 
   const onFileClick = (file: string) => {
     if (!editor) return;
-    const text = isEmpty(code) ? `cat /files/${file}` : `/files/${file} `;
+    const text = isEmpty($code) ? `cat /files/${file}` : `/files/${file} `;
     editor.insertAtCursor(text);
     editor.focus();
   };
@@ -34,11 +33,16 @@
     class="flex flex-1 w-full gap-4 items-stretch bg-gray-800 p-4 rounded-lg overflow-hidden"
   >
     <div class="flex-1 border border-gray-600 rounded-md overflow-hidden">
-      <Editor bind:this={editor} bind:code {disable} onEnter={sendCode} />
+      <Editor
+        bind:this={editor}
+        bind:code={$code}
+        {disable}
+        onEnter={sendCode}
+      />
     </div>
     <button
       class="btn btn-success px-4 py-2 self-start flex items-center gap-2"
-      disabled={!code}
+      disabled={!$code}
       onclick={sendCode}
     >
       <Run class="w-5 h-5" /> Run
