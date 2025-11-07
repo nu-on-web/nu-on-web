@@ -44,7 +44,7 @@
     </div>
   {:else if message.value.type === "success" && message.value.valueType !== "error"}
     <div class="chat-bubble bg-slate-950 before:bg-slate-950 max-h-[80vh]">
-      <div class="response-content">
+      <div class="response-content whitespace-pre">
         {#if message.value.valueType === "html"}
           {@html sanitizeHtml(message.value.val)}
         {:else if message.value.valueType === "string"}
