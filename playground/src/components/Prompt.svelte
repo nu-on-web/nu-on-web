@@ -31,9 +31,9 @@
 <div class="h-full flex flex-col gap-4">
   <FilesBar class="w-full" {onFileClick} />
   <div
-    class="flex flex-1 w-full gap-4 items-stretch bg-gray-800 p-4 rounded-lg overflow-hidden"
+    class="flex flex-1 w-full gap-4 items-stretch bg-gray-800 p-4 rounded-lg"
   >
-    <div class="flex-1 border border-gray-600 rounded-md overflow-hidden">
+    <div class="flex-1 border border-gray-600 rounded-md">
       <Editor bind:this={editor} bind:code {disable} onEnter={sendCode} />
     </div>
     <button
