@@ -8,11 +8,11 @@
   let messages = $state<Message[]>([]);
 
   function onSend(code: string) {
-    messages = [...messages, { type: "user", value: code, time: new Date() }];
+    messages = [...messages, { type: "user", result: code, time: new Date() }];
     const result = runCode(code);
     messages = [
       ...messages,
-      { type: "nushell", value: result, time: new Date() },
+      { type: "nushell", result: result, time: new Date() },
     ];
   }
   let gutter = $state<HTMLDivElement>();
