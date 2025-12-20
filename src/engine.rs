@@ -11,12 +11,13 @@ use std::{convert::TryInto, sync::Arc};
 
 use crate::{
     commands,
-    types::{GetCommandDescriptionResult, RunCodeResult},
+    types::{GetCommandDescriptionResult, NValue, RunCodeResult},
 };
 
 pub struct Engine {
     engine_state: EngineState,
     stack: Stack,
+    n: u32,
 }
 
 impl Engine {
@@ -37,6 +38,7 @@ impl Engine {
         Self {
             engine_state,
             stack,
+            n: 0,
         }
     }
 
@@ -68,6 +70,7 @@ impl Engine {
                     .collect(),
             };
         }
+
         let delta = working_set.render();
 
         self.engine_state
@@ -81,11 +84,34 @@ impl Engine {
             PipelineData::Empty,
         )
         .and_then(|v| v.into_value(Span::unknown()))
+        .inspect(|v| {
+            let mut working_set = StateWorkingSet::new(&self.engine_state);
+            self.n += 1;
+            let variable_id = working_set.add_variable(
+                format!("_{}", self.n).into(),
+                v.span(),
+                v.get_type(),
+                false,
+            );
+
+            working_set.set_variable_const_val(variable_id, v.clone());
+
+            let delta = working_set.render();
+
+            self.engine_state
+                .merge_delta(delta)
+                .expect("Failed to assign variable");
+        })
         .map(|v| -> crate::types::Value {
             v.try_into()
                 .unwrap_or_else(|v| crate::types::Value::html(self.value_to_html(v)))
         })
-        .map(RunCodeResult::Success)
+        .map(|v| {
+            RunCodeResult::Success(NValue {
+                n: self.n,
+                value: v,
+            })
+        })
         .unwrap_or_else(|e| RunCodeResult::Error(e.into()))
     }
 
@@ -103,8 +129,12 @@ impl Engine {
             HTML_COMMAND
         );
         let delta = working_set.render();
-        self.engine_state.merge_delta(delta).unwrap_or_else(|_| panic!("Failed to merge engine state delta for '{}' command",
-                HTML_COMMAND));
+        self.engine_state.merge_delta(delta).unwrap_or_else(|_| {
+            panic!(
+                "Failed to merge engine state delta for '{}' command",
+                HTML_COMMAND
+            )
+        });
         let Value::String { val, .. } = eval_block::<WithoutDebug>(
             &self.engine_state,
             &mut self.stack,
