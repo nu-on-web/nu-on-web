@@ -11,7 +11,7 @@ use std::{convert::TryInto, sync::Arc};
 
 use crate::{
     commands,
-    types::{GetCommandDescriptionResult, NValue, RunCodeResult},
+    types::{GetCommandDescriptionResult, IndexedValue, RunCodeResult},
 };
 
 pub struct Engine {
@@ -107,7 +107,7 @@ impl Engine {
                 .unwrap_or_else(|v| crate::types::Value::html(self.value_to_html(v)))
         })
         .map(|v| {
-            RunCodeResult::Success(NValue {
+            RunCodeResult::Success(IndexedValue {
                 n: self.n,
                 value: v,
             })

@@ -127,7 +127,7 @@ impl From<nu_protocol::ShellError> for ShellError {
 
 #[derive(Serialize, Debug, Tsify)]
 #[serde(rename_all = "camelCase", tag = "type")]
-pub struct NValue {
+pub struct IndexedValue {
     pub n: u32,
     pub value: Value,
 }
@@ -136,7 +136,7 @@ pub struct NValue {
 #[tsify(into_wasm_abi)]
 #[serde(rename_all = "camelCase", tag = "type")]
 pub enum RunCodeResult {
-    Success(NValue),
+    Success(IndexedValue),
     Error(ShellError),
     ParseErrors { values: Vec<ParseError> },
     CompileErrors { values: Vec<CompileError> },
