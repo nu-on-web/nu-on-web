@@ -19,7 +19,7 @@ nu-protocol = { version = "0.107.0", default-features = false }
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.145"
 nu-engine = { version = "0.107.0", default-features = false }
-nu-command = { version = "0.107.0", default-features = false, features = [
+nu-command = { version = "0.108.0", default-features = false, features = [
   "js",
   "rand",
 ] }
