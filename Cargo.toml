@@ -23,7 +23,7 @@ nu-command = { version = "0.107.0", default-features = false, features = [
   "js",
   "rand",
 ] }
-uuid = { version = "1.18.1", features = ["js"] }
+uuid = { version = "1.19.0", features = ["js"] }
 getrandom = { version = "0.3", features = ["wasm_js"] }
 nu-parser = { version = "0.107.0", default-features = false }
 nu-cmd-extra = "0.107.0"
