@@ -12,6 +12,7 @@
   import duration from "dayjs/plugin/duration";
   import relativeTime from "dayjs/plugin/relativeTime";
   import type { Value } from "../wasm/nushell_wasm";
+  import { includes } from "lodash-es";
 
   dayjs.extend(relativeTime);
   dayjs.extend(duration);
@@ -39,39 +40,43 @@
   <div class="chat-header">
     {message.type}
     {#if message.type === "nushell" && message.result.type === "success"}
-      <b>#{message.result.n}</b>
+      <b>#{message.result.c.n}</b>
     {/if}
   </div>
   {#if message.type === "user"}
     <div class="chat-bubble bg-slate-950 before:bg-slate-950 max-h-[80vh]">
       <Highlight language={shell} code={message.result} class="shadow-xl" />
     </div>
-  {:else if message.result.type === "success" && message.result.value.valueType !== "error"}
+  {:else if message.result.type === "success" && message.result.c.value.valueType !== "error"}
     <div class="chat-bubble bg-slate-950 before:bg-slate-950 max-h-[80vh]">
       <div class="response-content whitespace-pre">
-        {#if message.result.value.valueType === "html"}
-          {@html sanitizeHtml(message.result.value.val)}
-        {:else if message.result.value.valueType === "string"}
-          {@html convert.toHtml(message.result.value.val)}
-        {:else if message.result.value.valueType === "nothing"}
+        {#if message.result.c.value.valueType === "html"}
+          {@html sanitizeHtml(message.result.c.value.val)}
+        {:else if message.result.c.value.valueType === "string"}
+          {@html convert.toHtml(message.result.c.value.val)}
+        {:else if message.result.c.value.valueType === "nothing"}
           <i class="text-gray-400">Got Nothing</i>
-        {:else if R.isIncludedIn( message.result.value.valueType, ["bool", "float", "int"] as const, )}
-          {message.result.value.val}
+        {:else if R.isIncludedIn( message.result.c.value.valueType, ["bool", "float", "int"] as const, )}
+          {message.result.c.value.val}
         {:else}
           {JSON.stringify(message.result)}
         {/if}
       </div>
     </div>
-  {:else if message.result.type === "error" || (message.result.type === "success" && message.result.value.valueType === "error")}
+  {:else if includes(["error", "parseErrors", "compileErrors"], message.result.type) || (message.result.type === "success" && message.result.c.value.valueType === "error")}
     <div
       class="chat-bubble max-h-[80vh] bg-error text-error-content flex items-center gap-2"
     >
       <Error class="h-5 w-5" />
       <div class="response-content">
         {#if message.result.type === "error"}
-          {message.result.msg}
+          {message.result.c.msg}
+        {:else if message.result.type === "parseErrors"}
+          {#each message.result.c.values as e}<p>{e.message}</p>{/each}
+        {:else if message.result.type === "compileErrors"}
+          {#each message.result.c.values as e}<p>{e.message}</p>{/each}
         {:else}
-          {(message.result.value as Extract<Value, { valueType: "error" }>)
+          {(message.result.c.value as Extract<Value, { valueType: "error" }>)
             .error.msg}
           }
         {/if}
