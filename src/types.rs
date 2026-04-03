@@ -134,7 +134,7 @@ pub struct IndexedValue {
 
 #[derive(Serialize, Debug, Tsify)]
 #[tsify(into_wasm_abi)]
-#[serde(rename_all = "camelCase", tag = "type")]
+#[serde(rename_all = "camelCase", tag = "type", content = "c")]
 pub enum RunCodeResult {
     Success(IndexedValue),
     Error(ShellError),
