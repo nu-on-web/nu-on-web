@@ -1402,6 +1402,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "nix"
+version = "0.30.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "74523f3a35e05aba87a1d978330aef40f67b0304ac79c1c00b294c9830543db6"
+dependencies = [
+ "bitflags",
+ "cfg-if",
+ "cfg_aliases",
+ "libc",
+]
+
+[[package]]
 name = "nom"
 version = "7.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1460,7 +1472,7 @@ dependencies = [
  "nu-parser",
  "nu-pretty-hex",
  "nu-protocol",
- "nu-utils",
+ "nu-utils 0.107.0",
  "num-traits",
  "rust-embed",
  "serde",
@@ -1480,7 +1492,7 @@ dependencies = [
  "nu-experimental",
  "nu-parser",
  "nu-protocol",
- "nu-utils",
+ "nu-utils 0.107.0",
  "shadow-rs",
 ]
 
@@ -1536,7 +1548,7 @@ dependencies = [
  "md-5",
  "mime",
  "mime_guess",
- "nix",
+ "nix 0.29.0",
  "nu-ansi-term",
  "nu-cmd-base",
  "nu-color-config",
@@ -1551,7 +1563,7 @@ dependencies = [
  "nu-system",
  "nu-table",
  "nu-term-grid",
- "nu-utils",
+ "nu-utils 0.107.0",
  "num-format",
  "num-traits",
  "nuon",
@@ -1612,7 +1624,7 @@ dependencies = [
  "nu-glob",
  "nu-path",
  "nu-protocol",
- "nu-utils",
+ "nu-utils 0.107.0",
 ]
 
 [[package]]
@@ -1638,7 +1650,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "aa61c4612129d55d6c90a720eeceb54e47de625ea75b95dcf1d822176a84dd90"
 dependencies = [
  "linked-hash-map",
- "nu-utils",
+ "nu-utils 0.107.0",
  "num-traits",
  "serde",
  "serde_json",
@@ -1657,7 +1669,7 @@ dependencies = [
  "nu-engine",
  "nu-path",
  "nu-protocol",
- "nu-utils",
+ "nu-utils 0.107.0",
  "serde_json",
 ]
 
@@ -1700,13 +1712,13 @@ dependencies = [
  "lru",
  "memchr",
  "miette",
- "nix",
+ "nix 0.29.0",
  "nu-derive-value",
  "nu-experimental",
  "nu-glob",
  "nu-path",
  "nu-system",
- "nu-utils",
+ "nu-utils 0.107.0",
  "num-format",
  "serde",
  "serde_json",
@@ -1731,7 +1743,7 @@ dependencies = [
  "libproc",
  "log",
  "mach2",
- "nix",
+ "nix 0.29.0",
  "ntapi",
  "procfs",
  "sysinfo",
@@ -1750,7 +1762,7 @@ dependencies = [
  "nu-color-config",
  "nu-engine",
  "nu-protocol",
- "nu-utils",
+ "nu-utils 0.107.0",
  "tabled",
 ]
 
@@ -1760,7 +1772,7 @@ version = "0.107.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "277850f2897ba4bcab306cd6cb98dfb64758fd53717cef3d21d4c9f34f3370d9"
 dependencies = [
- "nu-utils",
+ "nu-utils 0.107.0",
  "unicode-width 0.2.0",
 ]
 
@@ -1777,7 +1789,29 @@ dependencies = [
  "log",
  "lscolors",
  "memchr",
- "nix",
+ "nix 0.29.0",
+ "num-format",
+ "serde",
+ "serde_json",
+ "strip-ansi-escapes",
+ "sys-locale",
+ "unicase",
+]
+
+[[package]]
+name = "nu-utils"
+version = "0.109.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8f16f0be98882112a30314aad40d34b21dee368ebdddd10abfc81eff1ec72d3c"
+dependencies = [
+ "byteyarn",
+ "crossterm_winapi",
+ "fancy-regex",
+ "lean_string",
+ "log",
+ "lscolors",
+ "memchr",
+ "nix 0.30.1",
  "num-format",
  "serde",
  "serde_json",
@@ -1835,7 +1869,7 @@ dependencies = [
  "nu-engine",
  "nu-parser",
  "nu-protocol",
- "nu-utils",
+ "nu-utils 0.107.0",
 ]
 
 [[package]]
@@ -1851,7 +1885,7 @@ dependencies = [
  "nu-engine",
  "nu-parser",
  "nu-protocol",
- "nu-utils",
+ "nu-utils 0.109.0",
  "serde",
  "serde-wasm-bindgen",
  "serde_json",
@@ -3104,7 +3138,7 @@ dependencies = [
  "glob",
  "iana-time-zone",
  "libc",
- "nix",
+ "nix 0.29.0",
  "number_prefix",
  "os_display",
  "uucore_procs",
